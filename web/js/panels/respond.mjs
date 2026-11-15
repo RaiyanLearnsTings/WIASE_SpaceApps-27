@@ -34,14 +34,17 @@ export function openResponse(ctx, issueId) {
     last = issue;
     const p = PROTOCOLS[issue.protocol];
     const r = store.get().responses[issue.id] || { done: [] };
-    const focused = document.activeElement?.closest?.('[data-step],#resp-note');
-    const focusSel = focused?.dataset.step ? `[data-step="${focused.dataset.step}"]` : focused ? '#resp-note' : null;
+    const focused = document.activeElement?.closest?.('[data-step],#resp-note,[data-story]');
+    const focusSel = focused?.dataset.step ? `[data-step="${focused.dataset.step}"]` : focused?.dataset.story ? '[data-story]' : focused ? '#resp-note' : null;
     const note = body.querySelector('#resp-note')?.value ?? r.note ?? '';
+    const alertId = issue.level === 'alert'
+      ? feed.state.frame?.active_alerts?.find((a) => a.rule === issue.protocol && a.target === issue.target)?.alert_id : null;
     body.innerHTML = `
       <div class="respond__grid">
         <section class="respond__info">
           <div class="respond__status">${issue.resolved ? statusPill('normal', 'Back in range') : statusPill(issue.level)}
-            <strong>${escapeHtml(issue.who)}</strong>${issue.since ? `<span class="muted small">since ${clockOf(issue.since)} sim UTC</span>` : ''}</div>
+            <strong>${escapeHtml(issue.who)}</strong>${issue.since ? `<span class="muted small">since ${clockOf(issue.since)} sim UTC</span>` : ''}
+            ${alertId ? `<button type="button" class="linkbtn" data-story="${alertId}">How was this detected? →</button>` : ''}</div>
           <p>${p.why}</p>
           <h4>Live evidence</h4>
           <table class="evidence-table"><tbody>${issue.evidence.map((e) => `<tr class="${e.breached ? 'is-out' : ''}">

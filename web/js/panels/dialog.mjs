@@ -4,6 +4,9 @@ const dialog = () => document.getElementById('dialog');
 
 export function openDialog({ kicker = '', title, body, wide = false, onClose }) {
   const d = dialog();
+  // Replacing an open dialog (e.g. response steps → walkthrough): run the old one's cleanup now. Its close
+  // event arrives a task later, when this dialog is already open, and is ignored below.
+  if (d.open) { const prev = d._onClose; d._onClose = null; prev?.(); d.close(); }
   d.className = wide ? 'dialog dialog--wide' : 'dialog';
   d.innerHTML = `
     <header class="dialog__head">
@@ -14,9 +17,15 @@ export function openDialog({ kicker = '', title, body, wide = false, onClose }) 
   const content = d.querySelector('.dialog__body');
   if (typeof body === 'string') content.innerHTML = body; else content.append(body);
   d.querySelector('[data-close]').addEventListener('click', () => d.close());
-  d.onclose = () => { onClose?.(); d.innerHTML = ''; };
+  d._onClose = onClose;
+  d.onclose = () => {
+    if (d.open) return; // a newer dialog already took over
+    const fn = d._onClose;
+    d._onClose = null;
+    fn?.();
+    d.innerHTML = '';
+  };
   d.onclick = (e) => { if (e.target === d) d.close(); }; // click on backdrop
-  if (d.open) d.close();
   d.showModal();
   return { dialog: d, body: content, close: () => d.close() };
 }

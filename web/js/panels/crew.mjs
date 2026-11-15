@@ -7,7 +7,7 @@ import { cardHead } from './card.mjs';
 
 export function mountCrew(el, ctx) {
   const { feed } = ctx;
-  el.innerHTML = `${cardHead({ idx: '04', title: 'Crew', kicker: 'Lit organs = outside that person’s own range' })}
+  el.innerHTML = `${cardHead({ idx: '04', title: 'Crew', kicker: 'Lit organs = outside that person’s own range', keys: ['1', '2', '3'] })}
     <div class="crew-grid" id="crew-grid"><p class="muted">Waiting for the simulator…</p></div>
     <footer class="card__foot"><span id="crew-foot"></span><span class="muted">Select an astronaut for vitals, baselines and 3D</span></footer>`;
   const grid = el.querySelector('#crew-grid');

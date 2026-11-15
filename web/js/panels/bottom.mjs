@@ -25,6 +25,14 @@ const TRENDS = {
   temperature_c: { label: 'Cabin temp', unit: '°C', lines: () => [['temperature_c', 'var(--watch)']], cabinThreshold: 'temperature_c', legend: 'shared cabin' },
 };
 
+// Readout name + formatting key for each history field drawn above.
+const LINE_META = {
+  heart_rate_bpm: ['Heart rate', 'heart_rate_bpm'], heart_rate_expected: ['Expected', 'heart_rate_bpm'],
+  heart_rate_threshold: ['Threshold', 'heart_rate_bpm'], systolic_mmhg: ['Systolic', 'systolic_mmhg'],
+  diastolic_mmhg: ['Diastolic', 'diastolic_mmhg'], median_reaction_time_ms: ['Reaction time', 'median_reaction_time_ms'],
+  spo2_pct: ['SpO₂', 'spo2_pct'], co2_ppm: ['CO₂', 'co2_ppm'], temperature_c: ['Temperature', 'temperature_c'],
+};
+
 const targetName = (f, target) => (target === 'cabin' ? 'Cabin' : f.astronauts.find((a) => a.id === target)?.name || target);
 
 export function mountBottom(el, ctx) {
@@ -122,7 +130,8 @@ export const alertsPage = {
       const pts = (fn) => hist.map((h) => ({ x: h.t, y: fn(h) ?? null, gap: h.gap }));
       const a = f.astronauts.find((x) => x.id === s.astronaut);
       const threshold = def.cabinThreshold ? f.cabin.comparisons[def.cabinThreshold]?.threshold : def.threshold?.(a);
-      const series = def.lines(a.id).map(([key, color, dashed]) => ({ color, dashed, points: pts((h) => (def.crew ? h.crew[a.id]?.[key] : h.cabin[key])) }));
+      const series = def.lines(a.id).map(([key, color, dashed]) => ({ name: LINE_META[key][0], key: LINE_META[key][1], color, dashed,
+        points: pts((h) => (def.crew ? h.crew[a.id]?.[key] : h.cabin[key])) }));
       const now = def.crew ? (metric === 'bp' ? `${a.blood_pressure.systolic_mmhg}/${a.blood_pressure.diastolic_mmhg} mmHg` : fmt(a.comparisons[metric]?.value ?? a[metric], metric))
         : fmt(f.cabin[metric], metric);
       body.querySelector('#ap-main').innerHTML = `<figure class="mini-chart mini-chart--large">
@@ -137,7 +146,7 @@ export const alertsPage = {
         : `<p class="muted small">Cabin readings are shared by all crew and are never summed into a crew score.</p>`;
       drawCharts(body, {
         main: { series, threshold, label: `${def.label} trend`, xLabel: xl },
-        crew: { series: f.astronauts.map((x, i) => ({ color: SERIES[i], points: pts((h) => h.crew[x.id]?.[firstKey]) })), label: `${def.label} across crew`, xLabel: xl },
+        crew: { series: f.astronauts.map((x, i) => ({ name: x.name, key: LINE_META[firstKey][1], color: SERIES[i], points: pts((h) => h.crew[x.id]?.[firstKey]) })), label: `${def.label} across crew`, xLabel: xl },
       });
 
       const issues = ctx.issues();
@@ -172,7 +181,7 @@ export const alertsPage = {
           <span class="mono small">${clockOf(e.at)}</span>
           <span class="pill pill--${e.type === 'opened' ? 'alert' : 'normal'}">${e.type === 'opened' ? '▲ Opened' : '● Cleared'}</span>
           <div class="event__text"><strong>${escapeHtml(targetName(f, e.target))}</strong> ${escapeHtml(e.label)}
-            <span class="muted small">${REASONS[e.reason] || e.reason}</span></div>
+            <span class="muted small">${REASONS[e.reason] || e.reason} · <button type="button" class="linkbtn" data-story="${e.alert_id}">How it was detected →</button></span></div>
           ${e.type === 'opened' ? (ack
             ? `<span class="small ack">✓ Acknowledged ${ack.at.slice(11, 16)} UTC${ack.note ? ` — “${escapeHtml(ack.note)}”` : ''}</span>`
             : issues.some((x) => x.id === `${e.rule}:${e.target}`)

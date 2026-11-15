@@ -41,7 +41,7 @@ Options: `--port`, `--seed`, `--start 2030-01-01T08:00:00Z`, `--checkins path/to
 
 ```sh
 python3 -m unittest discover -s tests -v     # simulator, server, zone sensors, dose, evaluation, check-ins (16 tests)
-node --test tests/web/*.test.mjs             # feed, organs, cabin map, issues, replay + local check-ins, reaction games (Node 18+, 31 tests)
+node --test tests/web/*.test.mjs             # feed, organs, cabin map, issues, replay + local check-ins, reaction games, charts, detection walkthrough, shortcuts (Node 18+, 49 tests)
 python3 tools/evaluate.py                    # detector validation → docs/VALIDATION.md (~3 min)
 python3 tools/record_demo.py                 # re-record web/demo/run.json after simulator changes
 ```
@@ -52,7 +52,7 @@ The layout follows the team's four-page sketch: one dashboard, and three cards t
 
 | Dashboard card | Expanded page (**+**) |
 |---|---|
-| **Top bar** (one row): Deep Space / ISS mode with the one-way delay, UTC mission clock and elapsed time, 1×/10×/60×, Live/Recorded badge, **Simulate** (scenarios, or recorded chapters), Tour, About, Settings/Export | — |
+| **Top bar** (one row): Deep Space / ISS mode with the one-way delay, in the recorded demo a **timeline** (play/pause, seek slider, a tick per chapter), UTC mission clock and elapsed time, 1×/10×/60×, Live/Recorded badge, **Simulate** (scenarios, or recorded chapters), Tour, About, Settings/Export | — |
 | **Alerts**: all-clear or the count of active alerts, each issue with its response-step progress | **Alerts & data**: trend explorer (HR, BP, reaction time, SpO₂, cabin CO₂/temp) per astronaut plus a crew comparison, and a paged event timeline with acknowledge + note (acknowledging never clears an alert) |
 | **To-do**: mission tasks, and a cognitive-test grid (check-in / reaction × P1–P3) | **To-do list**: overall mission + simulated **ground link** (packets arrive after the comms delay), take-test launchers, and a task column per astronaut (check-ins, work blocks, exercise, sleep from the simulator schedule) |
 | **Cabin environment**: mini top-view map with sensor radii, CO₂ / temperature / humidity / noise | **Cabin status**: top view of Rest / Work / Systems / Lab with 8 synthetic zone sensors. A sensor past its threshold shows a dashed amber radius; the one driving an active cabin alert shows a solid orange radius. Click a sensor for reading vs expected vs threshold. Also readings and trends. |
@@ -67,6 +67,14 @@ The layout follows the team's four-page sketch: one dashboard, and three cards t
 - a note field and an **Acknowledge** button
 
 The steps are non-diagnostic and defer to mission procedures. Acknowledging records the response; it never clears an alert. The protocols live in `web/js/issues.mjs`.
+
+**How was this detected?** Every alert in the Alerts timeline (and every confirmed alert's response window) opens a four-step walkthrough on its real frames: personal baseline and threshold → past threshold but not yet an alert (the 12 s confirmation window) → alert opened → recovery band and clearing. Everything it marks comes from the server: the alert events, the server's per-frame "past threshold" / "in recovery band" flags and the published method (`/api/baselines` → `method`). See `web/js/detection.mjs`.
+
+**Reading the charts.** Hover any trend chart, or focus it and use ← → Home End, for the exact values at that moment. Every chart on screen marks the same simulated time; missing values read "—".
+
+**Keyboard.** `1` `2` `3` open an astronaut, `A` Alerts, `T` To-do, `C` Cabin, `I` About, `P` pause/play the recording, `?` lists them all (also the keyboard icon in the top bar, and the key shown next to each card's Open button). Shortcuts pause while typing, during check-ins and during the tour.
+
+**Timeline (recorded demo).** Drag the slider with a mouse, touchpad or finger, swipe two fingers over it, or focus it and use the arrow keys. Playback holds while you drag; dragging backwards replays from the start, which clears local acknowledgements like Restart does.
 
 The dashboard and pages never scroll on a laptop or projector (≥ 900 × 600). On phones the cards stack and the page scrolls.
 Without WebGL, a 2D figure with the same hotspots replaces the 3D view.

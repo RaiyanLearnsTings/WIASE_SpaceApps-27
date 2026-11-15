@@ -108,15 +108,15 @@ export const personPage = {
         const xl = (t) => clockOf(hist.find((h) => h.t === t)?.at);
         const charts = [
           { title: 'Heart rate', value: fmt(a.heart_rate_bpm, 'heart_rate_bpm'), series: [
-            { color: 'var(--ice)', points: pts((h) => h.crew[id]?.heart_rate_bpm) },
-            { color: 'var(--muted)', dashed: true, points: pts((h) => h.crew[id]?.heart_rate_expected) },
-            { color: 'var(--alert)', dashed: true, points: pts((h) => h.crew[id]?.heart_rate_threshold) }] },
+            { name: 'Heart rate', key: 'heart_rate_bpm', color: 'var(--ice)', points: pts((h) => h.crew[id]?.heart_rate_bpm) },
+            { name: 'Expected', key: 'heart_rate_bpm', color: 'var(--muted)', dashed: true, points: pts((h) => h.crew[id]?.heart_rate_expected) },
+            { name: 'Threshold', key: 'heart_rate_bpm', color: 'var(--alert)', dashed: true, points: pts((h) => h.crew[id]?.heart_rate_threshold) }] },
           { title: 'Blood pressure', value: `${a.blood_pressure.systolic_mmhg}/${a.blood_pressure.diastolic_mmhg} mmHg`, series: [
-            { color: 'var(--ice)', points: pts((h) => h.crew[id]?.systolic_mmhg) },
-            { color: 'var(--steel-2)', points: pts((h) => h.crew[id]?.diastolic_mmhg) }] },
+            { name: 'Systolic', key: 'systolic_mmhg', color: 'var(--ice)', points: pts((h) => h.crew[id]?.systolic_mmhg) },
+            { name: 'Diastolic', key: 'diastolic_mmhg', color: 'var(--steel-2)', points: pts((h) => h.crew[id]?.diastolic_mmhg) }] },
           { title: 'Reaction time (sim)', value: fmt(a.cognition?.median_reaction_time_ms, 'median_reaction_time_ms'),
-            series: [{ color: 'var(--accent)', points: pts((h) => h.crew[id]?.median_reaction_time_ms) }], threshold: a.comparisons.median_reaction_time_ms?.threshold },
-          { title: 'SpO₂', value: fmt(a.spo2_pct, 'spo2_pct'), series: [{ color: 'var(--ok)', points: pts((h) => h.crew[id]?.spo2_pct) }] },
+            series: [{ name: 'Reaction time', key: 'median_reaction_time_ms', color: 'var(--accent)', points: pts((h) => h.crew[id]?.median_reaction_time_ms) }], threshold: a.comparisons.median_reaction_time_ms?.threshold },
+          { title: 'SpO₂', value: fmt(a.spo2_pct, 'spo2_pct'), series: [{ name: 'SpO₂', key: 'spo2_pct', color: 'var(--ok)', points: pts((h) => h.crew[id]?.spo2_pct) }] },
         ];
         const trends = body.querySelector('#pp-trends');
         trends.innerHTML = charts.map((c, i) => `<figure class="mini-chart">

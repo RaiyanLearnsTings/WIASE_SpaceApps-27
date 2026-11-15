@@ -10,7 +10,12 @@ function steps(ctx) {
     if (ctx.mode === 'replay') await ctx.api.trigger(id);
     else ctx.feed.accept(await ctx.api.trigger(id, target, 900));
   };
-  const closePage = () => ctx.pages.close();
+  const closeDialog = () => { const d = document.getElementById('dialog'); if (d?.open) d.close(); };
+  const closePage = () => { closeDialog(); ctx.pages.close(); };
+  const openLatestStory = (rule, target) => {
+    const e = ctx.feed.state.events.find((x) => x.type === 'opened' && x.rule === rule && x.target === target); // newest first
+    if (e) ctx.openStory(e.alert_id, { stage: 2 });
+  };
   return [
     { title: 'WIASE · crew health for deep space', text: 'Mars is up to 22 light-minutes away, so the crew must spot health changes themselves. WIASE compares each astronaut with their <b>own</b> baseline, calibrated from real data including NASA ISS cabin and radiation records.',
       target: '.brand', before: closePage },
@@ -18,12 +23,16 @@ function steps(ctx) {
       target: '#card-crew' },
     { title: 'A change appears', text: 'Astronaut 002’s reaction time slows and anxiety rises on check-ins. Once 2 of 3 cognitive signals stay out of range, the server confirms an alert — and 002’s brain lights up.',
       target: '#card-crew .crew-col[data-id="astro-2"]', before: () => jump('cognitive_stress', 'astro-2'), settle: 2200 },
+    { title: 'How it was confirmed', text: 'Any alert can be walked through on its real frames: the personal threshold, the 12-second confirmation (yellow band), the moment the server opened it (red line), then recovery. Step through it with Back / Next.',
+      target: '.story__nav', before: () => openLatestStory('cognitive_stress', 'astro-2'), settle: 900 },
     { title: 'Why, not just what', text: 'Open the astronaut: the brain is isolated, and the panel shows each reading against expected value and threshold, the organs involved, and non-diagnostic checks to do next.',
-      target: '#pp-side', before: async () => { ctx.openPerson('astro-2'); await wait(900); ctx.store.set({ organ: 'brain' }); }, settle: 1800 },
+      target: '#pp-side', before: async () => { closeDialog(); ctx.openPerson('astro-2'); await wait(900); ctx.store.set({ organ: 'brain' }); }, settle: 1800 },
     { title: 'The shared cabin', text: 'CO₂ builds up, worst in the Work module. The map shows which sensor drives the cabin alert, with a radius for how far past threshold it is. Shown as context — never as the cause of a crew change.',
       target: '.cabin-page__svg', before: async () => { closePage(); await jump('co2_buildup', 'cabin'); await wait(500); ctx.openPage('cabin'); }, settle: 1800 },
     { title: 'Built for the delay', text: 'Deep Space mode simulates the one-way comms delay: ground review packets arrive minutes later, so the crew acts on board. Check-ins, trends, events and export are one click away.',
       target: '.topbar [aria-label="Operating environment"]', before: closePage },
+    ...(ctx.mode === 'replay' ? [{ title: 'Explore at your own pace', text: 'Pause, drag the timeline or click a chapter tick to jump. Hover any chart (or focus it and use the arrow keys) for exact values; every chart on screen follows the same moment. Press <kbd>?</kbd> for keyboard shortcuts.',
+      target: '.scrub', before: closePage }] : []),
     { title: 'How we know it works', text: 'Measured on the simulator: 0 false alerts in 30 crew-days, every full-size change caught in ~15–21 s, and the smallest detectable change per signal. See About → Validation.',
       target: '#about-btn', before: closePage, last: true },
   ];

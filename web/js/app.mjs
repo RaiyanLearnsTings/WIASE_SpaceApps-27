@@ -16,20 +16,42 @@ import { aboutPage } from './panels/about.mjs';
 import { createTour } from './tour.mjs';
 import { collectIssues } from './issues.mjs';
 import { openResponse } from './panels/respond.mjs';
+import { openStory } from './panels/story.mjs';
 import { createPageHost } from './panels/overlay.mjs';
 import { toast } from './panels/dialog.mjs';
 import { openReaction } from './checkin/pvt.mjs';
 import { openSurvey } from './checkin/survey.mjs';
 import { exportSession } from './export.mjs';
 import { FallbackViewer } from './body/fallback2d.mjs';
+import { escapeHtml } from './format.mjs';
+import { installShortcuts } from './shortcuts.mjs';
 
 const $ = (id) => document.getElementById(id);
 const store = createStore();
+// index.html shows a loading outline; say what is happening until the panels mount over it.
+const bootStatus = (text) => { const el = $('boot-status'); if (el) el.textContent = text; };
+async function loadRecording() {
+  bootStatus('Loading the recorded demo…');
+  try {
+    const r = await fetch('demo/run.json');
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (error) {
+    bootStatus('Could not load the recorded demo.');
+    $('boot-status')?.classList.add('is-error');
+    document.querySelector('.dash').innerHTML = `<section class="card boot-error" role="alert"><strong>Demo data didn’t load</strong>
+      <span class="muted">The recorded run (demo/run.json) could not be fetched: ${escapeHtml(error.message)}. Check your connection and reload,
+      or run the local server: <code>python3 server/server.py</code>.</span>
+      <span><button type="button" class="btn btn--primary" onclick="location.reload()">Reload</button></span></section>`;
+    throw error;
+  }
+}
 // Live when the local WIASE server answers; otherwise (static hosting) play the recorded demo run.
+bootStatus('Connecting…');
 const mode = await detectMode();
 let feed, api, run = null;
 if (mode === 'replay') {
-  run = await fetch('demo/run.json').then((r) => r.json());
+  run = await loadRecording();
   feed = new ReplayFeed(run);
   api = replayApi(feed, run);
 } else {
@@ -85,7 +107,14 @@ const ctx = {
     return statusCache.map[id];
   },
   openPage(id) { pages.open(PAGES[id]); },
+  /** Recorded demo only (the live server has no pause). Returns whether anything happened. */
+  togglePause() {
+    if (mode !== 'replay') return false;
+    feed.setPaused(!feed.paused);
+    return true;
+  },
   openResponse: (id) => openResponse(ctx, id),
+  openStory: (alertId, opts) => openStory(ctx, alertId, opts),
   /** Current issues (alerts first, then watch items); memoised per frame. */
   issues() {
     const f = feed.state.frame;
@@ -111,6 +140,7 @@ const ctx = {
 const pages = createPageHost(ctx);
 ctx.pages = pages;
 ctx.tour = createTour(ctx);
+installShortcuts(ctx);
 
 async function loadMetadata() {
   try {
@@ -177,6 +207,8 @@ function render() {
 
 // ---- events -------------------------------------------------------------------------------
 document.addEventListener('click', (e) => {
+  const story = e.target.closest('[data-story]');
+  if (story) { ctx.openStory(Number(story.dataset.story)); return; }
   const issue = e.target.closest('[data-issue]');
   if (issue) { ctx.openResponse(issue.dataset.issue); return; }
   const b = e.target.closest('[data-expand]');

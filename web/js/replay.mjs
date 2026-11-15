@@ -3,6 +3,7 @@
 // ordering, history, gap handling and event de-duplication behave identically.
 //
 // Speed 1×/10×/60× = simulated seconds per wall second. Reset rewinds; "trigger" jumps to a chapter.
+// Pause freezes playback (choosing a speed resumes it); the top-bar timeline seeks to any frame.
 // Each rewind starts a new pass with its own run_id, so the UI resets exactly like a server reset.
 import { FeedState } from './feed.mjs';
 import { createLocalCheckins } from './checkin/localStore.mjs';
@@ -23,6 +24,29 @@ export class ReplayFeed {
     this.rate = 60;
     this.carry = 0;
     this.endedAt = null;
+    this.paused = false;
+    this.held = false; // temporary hold while the timeline is being dragged (not a user-visible pause)
+  }
+
+  /** Stop the clock while someone drags the timeline, without changing the play/pause state. */
+  hold(held) {
+    this.held = !!held;
+    this.carry = 0;
+  }
+
+  /** Start a fresh pass from the first frame (new run_id, like a server reset). */
+  restart() {
+    this.pass += 1;
+    this.index = -1;
+    this.seek(0);
+  }
+
+  /** Freeze or resume playback; seeking still works while paused. */
+  setPaused(paused) {
+    this.paused = !!paused;
+    this.carry = 0;
+    this.endedAt = null;
+    this.emit('connection');
   }
 
   subscribe(fn) { this.listeners.add(fn); return () => this.listeners.delete(fn); }
@@ -45,6 +69,7 @@ export class ReplayFeed {
   /** Move to frame i, ingesting every frame in between so history and events stay complete. */
   seek(i) {
     const target = Math.max(0, Math.min(this.last, i));
+    if (target === this.index) return; // already there: no replay, no new run
     let reason = 'accepted';
     if (target <= this.index) { this.pass += 1; this.index = -1; reason = 'new-run'; }
     for (let k = this.index + 1; k <= target; k++) {
@@ -67,6 +92,7 @@ export class ReplayFeed {
   }
 
   tick(ms) {
+    if (this.paused || this.held) return;
     if (this.index >= this.last) {
       this.endedAt ??= this.now();
       if (this.now() - this.endedAt >= HOLD_AT_END_MS) this.seek(0); // loop the recording
@@ -104,8 +130,8 @@ export function replayApi(feed, run, checkins = createLocalCheckins()) {
       scenarios: run.chapters.map((c) => ({ id: c.id, label: c.label, description: c.description, scope: 'recorded' })),
       durations: run.durations,
     }),
-    speed: async (speed) => { feed.rate = speed; feed.emit('connection'); return null; },
-    reset: async () => { feed.seek(0); return null; },
+    speed: async (speed) => { feed.rate = speed; feed.setPaused(false); return null; },
+    reset: async () => { feed.restart(); return null; },
     trigger: async (id) => {
       const c = chapter(id);
       if (!c) throw new Error('That scenario is not part of the recorded demo. Run the local server for live scenarios.');

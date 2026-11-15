@@ -15,7 +15,10 @@ export function createPageHost(ctx) {
   dialog.addEventListener('cancel', (e) => {
     if (active?.page.onCancel?.(ctx)) e.preventDefault();
   });
+  // The close event arrives a task after close(). If a page was opened again in between (e.g. Esc then
+  // a keyboard shortcut), that late event must not tear down the new page.
   dialog.addEventListener('close', () => {
+    if (dialog.open) return;
     active?.view.destroy?.();
     active = null;
     dialog.innerHTML = '';
@@ -23,7 +26,7 @@ export function createPageHost(ctx) {
   });
 
   function open(page) {
-    if (dialog.open) { active?.view.destroy?.(); active = null; }
+    if (active) { active.view.destroy?.(); active = null; } // open, or closed with its close event still pending
     dialog.className = `page page--${page.id}`;
     dialog.setAttribute('aria-labelledby', 'page-title');
     dialog.innerHTML = `
@@ -55,5 +58,6 @@ export function createPageHost(ctx) {
 
   function close() { if (dialog.open) dialog.close(); }
 
-  return { open, close, render, get active() { return active?.page.id ?? null; }, el: dialog };
+  // `active` is only reported while the dialog is actually open (it is cleared a task after closing).
+  return { open, close, render, get active() { return dialog.open ? active?.page.id ?? null : null; }, el: dialog };
 }

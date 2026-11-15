@@ -10,12 +10,24 @@ export const MAX_HISTORY = 600;
 export const MAX_EVENTS = 200;
 const STALE_MS = 5000;
 
+// Signals behind the server's alert rules. For these, each sample also keeps the server's own
+// comparison (expected, threshold, breached, in recovery band) so the detection walkthrough can
+// show exactly what the server saw, frame by frame, without the browser re-deciding anything.
+export const CREW_CHECKS = ['heart_rate_bpm', 'median_reaction_time_ms', 'lapses', 'state_anxiety_score'];
+export const CABIN_CHECKS = ['co2_ppm', 'temperature_c', 'relative_humidity_pct'];
+const checkOf = (c) => (c ? {
+  expected: c.expected ?? null, threshold: c.threshold ?? null,
+  breached: c.threshold_breached ?? null, in_band: c.in_recovery_band ?? null,
+} : null);
+const checksOf = (comparisons, keys) => Object.fromEntries(keys.map((k) => [k, checkOf(comparisons[k])]));
+
 /** Compact sample kept per frame for charts (null stays null). */
 export function sampleOf(frame) {
   const crew = {};
   for (const a of frame.astronauts || []) {
     const c = a.comparisons || {};
     crew[a.id] = {
+      checks: checksOf(c, CREW_CHECKS),
       heart_rate_bpm: a.heart_rate_bpm ?? null,
       heart_rate_expected: c.heart_rate_bpm?.expected ?? null,
       heart_rate_threshold: c.heart_rate_bpm?.threshold ?? null,
@@ -34,6 +46,8 @@ export function sampleOf(frame) {
     at: frame.clock?.simulated_at ?? null,
     crew,
     cabin: {
+      status: cab.alert_status ?? null,
+      checks: checksOf(cab.comparisons || {}, CABIN_CHECKS),
       co2_ppm: cab.co2_ppm ?? null,
       temperature_c: cab.temperature_c ?? null,
       relative_humidity_pct: cab.relative_humidity_pct ?? null,

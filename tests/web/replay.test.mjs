@@ -55,6 +55,56 @@ test('ticks advance by rate × time and loop after the end', () => {
   assert.equal(feed.pass, pass + 1);
 });
 
+test('pause freezes playback and the end-of-run loop; seeking and choosing a speed still work', async () => {
+  let now = 0;
+  const feed = new ReplayFeed(run, { now: () => now });
+  const api = replayApi(feed, run, createLocalCheckins(memory()));
+  feed.seek(0);
+  feed.setPaused(true);
+  feed.tick(5000);
+  assert.equal(feed.index, 0);
+  feed.seek(10);
+  assert.equal(feed.index, 10);
+  feed.seek(feed.last);
+  feed.tick(250); now += 60000; feed.tick(250);
+  assert.equal(feed.index, feed.last, 'no loop while paused');
+  await api.speed(10);
+  assert.equal(feed.paused, false);
+  feed.seek(0);
+  feed.tick(2000); // 10 × 2 s = 20 sim-s = 1 frame
+  assert.equal(feed.index, 1);
+});
+
+test('holding for a drag stops the clock without pausing; seeking to the current frame changes nothing', () => {
+  const feed = new ReplayFeed(run);
+  const reasons = [];
+  feed.subscribe((_, r) => reasons.push(r));
+  feed.seek(0);
+  feed.seek(40);
+  const runId = feed.state.runId;
+  feed.hold(true);
+  feed.tick(5000);
+  assert.equal(feed.index, 40);
+  assert.equal(feed.paused, false);
+  const before = reasons.length;
+  feed.seek(40);
+  assert.equal(reasons.length, before, 'no emit');
+  assert.equal(feed.state.runId, runId, 'no new run');
+  feed.hold(false);
+  feed.tick(1000);
+  assert.equal(feed.index, 43);
+});
+
+test('restart always begins a new pass, even from the first frame', async () => {
+  const feed = new ReplayFeed(run);
+  const api = replayApi(feed, run, createLocalCheckins(memory()));
+  feed.seek(0);
+  const runId = feed.state.runId;
+  await api.reset();
+  assert.equal(feed.index, 0);
+  assert.notEqual(feed.state.runId, runId);
+});
+
 test('local check-ins mirror server scoring and survey amendment', () => {
   const store = createLocalCheckins(memory());
   const trials = [300, 320, 510, 280, 290].map((rt) => ({ delay_ms: 2500, rt_ms: rt, outcome: 'valid' }));

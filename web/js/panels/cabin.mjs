@@ -135,7 +135,7 @@ export const cabinPage = {
         <figcaption><span>${label}</span><strong class="mono">${fmt(f.cabin[key], key)}</strong></figcaption>
         <div class="chart-slot" data-chart="${key}"></div></figure>`).join('');
       drawCharts(body.querySelector('#cp-charts'), Object.fromEntries(READINGS.map(([key, label]) => [key, {
-        series: [{ color: 'var(--ice)', points: hist.map((h) => ({ x: h.t, y: h.cabin[key], gap: h.gap })) }],
+        series: [{ name: label, key, color: 'var(--ice)', points: hist.map((h) => ({ x: h.t, y: h.cabin[key], gap: h.gap })) }],
         threshold: f.cabin.comparisons[key]?.threshold, label: `${label} history`, xLabel: xl }])));
     }
     return { render };

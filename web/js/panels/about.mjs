@@ -105,7 +105,7 @@ function credits() {
       <ul class="plain small">
         <li>${ATTRIBUTION} Phrenic nerves approximated.</li>
         <li>three.js r170, GLTFLoader, OrbitControls (MIT) · meshoptimizer decoder (MIT).</li>
-        <li>Fonts: Rajdhani, Space Grotesk, IBM Plex Mono (SIL Open Font License).</li>
+        <li>Fonts: IBM Plex Sans, Sans Condensed and Mono (SIL Open Font License 1.1), bundled in web/vendor/fonts for offline use.</li>
         <li>Datasets as listed on the Data tab, under their own licences.</li>
       </ul></section>
     <section class="panel"><header class="panel__head"><h3>Use of AI tools</h3></header>
