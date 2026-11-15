@@ -2,6 +2,7 @@
 // structures lit (centre), region details & recommendations (right) and key-measurement trends (bottom).
 import { ACTIVITY, METRICS, fmt, signed, statusPill, clockOf, isNum } from '../format.mjs';
 import { drawCharts } from '../charts.mjs';
+import { setHTML, setText } from '../dom.mjs';
 import { mountSidebar } from './sidebar.mjs';
 import { hhmm } from './schedule.mjs';
 import { ATTRIBUTION } from '../body/anatomy.mjs';
@@ -84,14 +85,14 @@ export const personPage = {
         ctx.withFocus(body.querySelector('#pp-side'), sideRender);
 
         const plan = base?.schedule;
-        body.querySelector('#pp-facts').innerHTML = `
+        setHTML(body.querySelector('#pp-facts'), `
           <div><dt>Crew ID</dt><dd class="mono">${a.id}</dd></div>
           <div><dt>Activity</dt><dd>${ACTIVITY[a.activity] || a.activity}${a.sleep.stage ? ` · ${a.sleep.stage}` : ''}</dd></div>
           <div><dt>Last sleep</dt><dd>${isNum(a.sleep.last_sleep_duration_min) ? `${Math.floor(a.sleep.last_sleep_duration_min / 60)}h ${Math.round(a.sleep.last_sleep_duration_min % 60)}m` : '—'}${isNum(a.sleep.last_sleep_efficiency_pct) ? ` · ${a.sleep.last_sleep_efficiency_pct}% eff.` : ''}</dd></div>
           <div><dt>Exercise · bed</dt><dd class="mono">${plan ? `${hhmm(plan.exercise_minute)} · ${hhmm(plan.bedtime_minute)}` : '—'}</dd></div>
-          <div><dt>Sleep source</dt><dd>${base ? `${base.sleep_source.participant} · night ${base.sleep_source.template_night}` : '—'} <span class="tag tag--workbook">BIDSleep</span></dd></div>`;
+          <div><dt>Sleep source</dt><dd>${base ? `${base.sleep_source.participant} · night ${base.sleep_source.template_night}` : '—'} <span class="tag tag--workbook">BIDSleep</span></dd></div>`);
 
-        body.querySelector('#pp-baselines').innerHTML = `<thead><tr><th>Metric</th><th>Baseline</th><th>Now</th><th>z</th></tr></thead><tbody>
+        setHTML(body.querySelector('#pp-baselines'), `<thead><tr><th>Metric</th><th>Baseline</th><th>Now</th><th>z</th></tr></thead><tbody>
           ${BASELINE_ROWS.map(([key, label]) => {
             const b = base?.baseline[key];
             const c = a.comparisons[key];
@@ -100,7 +101,7 @@ export const personPage = {
               <td class="mono">${b ? `${fmt(b.center, key, { unit: false })}<small> ±${fmt(b.spread, key, { unit: false })}</small>` : '—'}</td>
               <td class="mono">${c ? fmt(c.value, key, { unit: false }) : '—'}<small> ${METRICS[key].unit}</small></td>
               <td class="mono">${c ? signed(c.robust_z) : '—'}</td></tr>`;
-          }).join('')}</tbody>`;
+          }).join('')}</tbody>`);
 
         const hist = feed.state.history;
         const id = a.id;
@@ -118,10 +119,13 @@ export const personPage = {
             series: [{ name: 'Reaction time', key: 'median_reaction_time_ms', color: 'var(--accent)', points: pts((h) => h.crew[id]?.median_reaction_time_ms) }], threshold: a.comparisons.median_reaction_time_ms?.threshold },
           { title: 'SpO₂', value: fmt(a.spo2_pct, 'spo2_pct'), series: [{ name: 'SpO₂', key: 'spo2_pct', color: 'var(--ok)', points: pts((h) => h.crew[id]?.spo2_pct) }] },
         ];
+        // The chart frames are built once; only the caption values and the chart drawings change per frame
+        // (rebuilding the frames would throw the charts away and redraw them all from scratch).
         const trends = body.querySelector('#pp-trends');
-        trends.innerHTML = charts.map((c, i) => `<figure class="mini-chart">
-          <figcaption><span>${c.title}</span><strong class="mono">${c.value}</strong></figcaption>
-          <div class="chart-slot" data-chart="${i}"></div></figure>`).join('');
+        setHTML(trends, charts.map((c, i) => `<figure class="mini-chart">
+          <figcaption><span>${c.title}</span><strong class="mono" data-value="${i}"></strong></figcaption>
+          <div class="chart-slot" data-chart="${i}"></div></figure>`).join(''));
+        charts.forEach((c, i) => setText(trends.querySelector(`[data-value="${i}"]`), c.value));
         drawCharts(trends, Object.fromEntries(charts.map((c, i) => [i, { series: c.series, threshold: c.threshold, label: `${c.title} trend`, xLabel: xl }])));
       },
       destroy() {

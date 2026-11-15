@@ -6,28 +6,32 @@ Track: *Create Health Monitoring Software for Astronauts on Space Missions*
 - Raiyan Bakshi — B.S. Environmental Engineering & Biomedical Engineering, CMU
 - Joshua Asamoah — B.S. Physics, CMU
 
-WIASE is a local decision-support console for a three-person deep-space crew. It answers four questions at a glance:
-**Who needs attention? What changed from their own baseline? Is the shared cabin also changing? What should be checked next?**
+**Live demo: https://wiase.netlify.app** (no install; press **Tour** for a 60-second walkthrough)
 
-The main dashboard fits on one screen with no scrolling. It has four cards: **Alerts**, **To-do**, **Cabin environment** and
-**Crew overview**. **Open ↗** (or a click anywhere on a card) expands it into a full page over a darkened, blurred background. Each astronaut
-has a real 3D anatomy model (Z-Anatomy derived). The organs and nerves of any out-of-range body region light up in the alert or
-watch colour. On the astronaut page you can orbit, pan and zoom the body like a CAD model. Clicking a coloured point
-(green = normal, amber = watch, red = alert, blue = telemetry, grey = no data) explains the problem, shows the live evidence
-against that astronaut's personal baseline, and isolates the organs and nerves involved.
+WIASE is a crew-health console for a three-person deep-space mission. A message to Earth can take 22 minutes each way,
+so the crew has to read its own health data. WIASE compares every astronaut with their own baseline and answers four
+questions at a glance: **Who needs attention? What changed from their own baseline? Is the shared cabin also changing?
+What should be done next?**
+
+The dashboard fits on one screen with four cards: **Alerts**, **To-do**, **Cabin** and **Crew**. **Open ↗** (or a click
+anywhere on a card) expands a card into a full page. Each astronaut has a 3D anatomy model (derived from Z-Anatomy) whose
+organs and nerves light up when that body region is outside the person's own range. On the astronaut page you can rotate,
+pan and zoom the body. Clicking a point (aqua = normal, yellow = watch, crimson = alert, warm grey = information only,
+dark grey = no data) shows the live evidence against that astronaut's baseline and isolates the organs and nerves involved.
+Every alert opens step-by-step response instructions with an owner for each step and a rule for when to escalate.
 
 > **Synthetic demo, not a medical device.** Crew telemetry is simulated, calibrated against real Earth-study and ISS
 > datasets. Nothing here diagnoses, treats or has clinical validation.
 
 ## Try it
 
-- **No install:** open the hosted demo (link on the project page) and press **Tour**. It plays a recorded run of the
-  simulator in the browser. Chapter jumps replace live scenarios, and check-ins save in your browser only.
+- **No install:** open **https://wiase.netlify.app** and press **Tour**. It plays a recorded run of the simulator in the
+  browser. Chapter jumps replace live scenarios, and check-ins save in your browser only.
 - **Live simulator:** follow *Run it* below. The same page detects the server and switches to live data.
 
 ## Run it
 
-Needs **Python 3.10+** only — no installs, no API keys, works offline.
+Needs **Python 3.10+** only: no installs, no API keys, and it works offline.
 
 ```sh
 python3 server/server.py --speed 60
@@ -41,7 +45,7 @@ Options: `--port`, `--seed`, `--start 2030-01-01T08:00:00Z`, `--checkins path/to
 
 ```sh
 python3 -m unittest discover -s tests -v     # simulator, server, zone sensors, dose, evaluation, check-ins (16 tests)
-node --test tests/web/*.test.mjs             # feed, organs, cabin map, issues, replay + local check-ins, reaction games, charts, detection walkthrough, shortcuts (Node 18+, 49 tests)
+node --test tests/web/*.test.mjs             # feed, organs, cabin map, issues, replay + local check-ins, reaction games, charts, detection walkthrough, shortcuts, rendering (Node 18+, 53 tests)
 python3 tools/evaluate.py                    # detector validation → docs/VALIDATION.md (~3 min)
 python3 tools/record_demo.py                 # re-record web/demo/run.json after simulator changes
 ```
@@ -52,7 +56,7 @@ The layout follows the team's four-page sketch: one dashboard, and three cards t
 
 | Dashboard card | Expanded page (**+**) |
 |---|---|
-| **Top bar** (one row): Deep Space / ISS mode with the one-way delay, in the recorded demo a **timeline** (play/pause, seek slider, a tick per chapter), UTC mission clock and elapsed time, 1×/10×/60×, Live/Recorded badge, **Simulate** (scenarios, or recorded chapters), Tour, About, Settings/Export | — |
+| **Top bar**, five zones divided by hairlines: brand · mission (Deep Space / ISS, one-way delay) · playback (in the recorded demo a **timeline** with play/pause and a tick per chapter, then 1×/10×/60×) · clock (UTC mission time, T+, Live/Recorded) · actions (**Simulate**, Tour, About, shortcuts, Settings/Export). On narrower screens the zones wrap onto two to four rows instead of overflowing | — |
 | **Alerts**: all-clear or the count of active alerts, each issue with its response-step progress | **Alerts & data**: trend explorer (HR, BP, reaction time, SpO₂, cabin CO₂/temp) per astronaut plus a crew comparison, and a paged event timeline with acknowledge + note (acknowledging never clears an alert) |
 | **To-do**: mission tasks, and a cognitive-test grid (check-in / reaction × P1–P3) | **To-do list**: overall mission + simulated **ground link** (packets arrive after the comms delay), take-test launchers, and a task column per astronaut (check-ins, work blocks, exercise, sleep from the simulator schedule) |
 | **Cabin environment**: mini top-view map with sensor radii, CO₂ / temperature / humidity / noise | **Cabin status**: top view of Rest / Work / Systems / Lab with 8 synthetic zone sensors. A sensor past its threshold shows a dashed amber radius; the one driving an active cabin alert shows a solid orange radius. Click a sensor for reading vs expected vs threshold. Also readings and trends. |
@@ -76,6 +80,8 @@ The steps are non-diagnostic and defer to mission procedures. Acknowledging reco
 
 **Timeline (recorded demo).** Drag the slider with a mouse, touchpad or finger, swipe two fingers over it, or focus it and use the arrow keys. Playback holds while you drag; dragging backwards replays from the start, which clears local acknowledgements like Restart does.
 
+**Performance on modest laptops.** The 3D view draws only when something changes (a drag, a zoom, a camera move, a new colour), so an idle astronaut page costs no GPU time. Anything hidden behind an open page or dialog stops updating and catches up when it closes; the guided tour holds the recording between its chapter jumps; panels rewrite their HTML only when it changed, and charts measure first and redraw only when their picture changed. Heavy moments (speed changes, chapter jumps, restarts) run behind a short veil that says what is happening (“Switching 10× → 60×”) and lifts once the new state is drawn, instead of stuttering in view. Low-power devices, or a first page that renders below ~35 fps, switch to **reduced visual effects** (no backdrop blur, lighter 3D) for that visit; Settings → Visual effects overrides it.
+
 The dashboard and pages never scroll on a laptop or projector (≥ 900 × 600). On phones the cards stack and the page scrolls.
 Without WebGL, a 2D figure with the same hotspots replaces the 3D view.
 
@@ -93,15 +99,22 @@ Without WebGL, a 2D figure with the same hotspots replaces the 3D view.
 
 ## Two-minute judge demo
 
-1. Point out the **Live** badge, mission clock at 60×, and the three crew cards — all green against *personal* baselines.
-2. Top bar: **Scenario → Cognitive stress → Astronaut 002 → Trigger**, then **Cabin CO₂ buildup → Trigger**. Within seconds 002's
-   brain and every crew member's lungs light up in the thumbnails, and the cabin map shows a solid radius on the Work CO₂ sensor.
-3. Click **002**. Orbit the body, then click the **Brain** point: the camera focuses, everything else fades, and the readings tab
-   lists reaction time, lapses and anxiety vs expected vs threshold. CO₂ is shown as *co-occurring*, never as the cause.
-4. Expand **Cabin** and click the glowing sensor. Expand **Alerts** to see opened alerts with reasons, and acknowledge one with a note.
-5. On the **Check-ins** tab (or To-do → Take test), run the **reaction test** (45 s; Tap, Go/No-Go and Left/Right games drawn at random each trial — Space, arrow keys or tap) and the **daily check-in**. Human input is labelled separately and never opens alerts.
-6. **To-do → Queue ground review** in Deep Space mode. Watch it arrive after 12 simulated minutes; switch to ISS and compare.
-7. Let the scenarios expire (or clear them) and watch recovery; **Export** the session JSON.
+Works on the hosted demo or the live server.
+
+1. Start on the dashboard: the mission clock, Deep Space mode with its 12-minute delay, and three astronauts, all normal
+   *for themselves*.
+2. **Simulate → Jump** to *Cognitive stress*. Astronaut 002's brain lights up crimson on the Crew card and the Alerts card
+   shows the alert.
+3. Open **002** and click the **Brain** point. The brain, brainstem and spinal cord are isolated, and the Readings tab lists
+   reaction time, lapses and anxiety against 002's expected value and limit.
+4. Click **Response steps**: tick a step, add a note, Acknowledge. The alert stays open until the readings recover.
+5. In the Alerts timeline, click **How it was detected →** to step through the alert on its real frames.
+6. **Simulate → Jump** to *Cabin CO₂ buildup*. Every astronaut's lungs light up, labelled "· cabin", and the Cabin map puts a
+   solid crimson ring on the Work CO₂ sensor.
+7. **To-do → Queue ground review** in Deep Space mode: the packet arrives 12 simulated minutes later. Switch to ISS to compare.
+8. Run the **reaction test** (45 s, three games drawn at random) from an astronaut's Check-ins tab. Human input is labelled
+   separately and never opens alerts.
+9. **About → Validation** for the measured false-alert and detection numbers.
 
 ## Validation
 
@@ -133,16 +146,16 @@ The workbook `data/Astronaut_Health_Data.xlsx` (Source guide sheet is the proven
 | State anxiety | QoL_Stress, relaxed phase (STAI-S) |
 | Cabin CO₂ / temperature / humidity | NASA EDA, ISS RR-6 daily profile |
 | Radiation | NASA RadLab DosTel1 (absorbed dose rate + cumulative absorbed dose; no dose equivalent) |
-| Cabin noise | **Synthetic** — no data supplied |
+| Cabin noise | **Synthetic** (no data supplied) |
 | Cabin zone sensors (map) | **Synthetic**: deterministic offsets of the RR-6 cabin reading; scenarios concentrate in one zone |
 | O₂ fraction / pressure | **Assumed** fixed reference, not measured |
 
 The crew are fictional, the daily schedule and scenario effects are synthetic, and baselines combine independent study
 participants (not longitudinal astronaut records). Alert thresholds are demo rules (≥ 3 robust spreads or a minimum change,
-confirmed over 12 simulated seconds) — **not NASA or clinical limits**. ISS-derived cabin data does not model deep space.
+confirmed over 12 simulated seconds). They are **not NASA or clinical limits**. ISS-derived cabin data does not model deep space.
 
 **Indicators from the brief:** heart rate ✔, blood pressure ✔, sleep ✔, mood ✔ (daily check-in), SpO₂ ✔.
-Blood sugar and core body temperature are **not included** — no source data was available, and we chose not to invent them.
+Blood sugar and core body temperature are **not included**: no source data was available, and we chose not to invent them.
 
 ## Repository layout
 

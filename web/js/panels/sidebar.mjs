@@ -5,6 +5,7 @@ import { ORGANS, ORGAN_BY_ID, STRUCTURES, organStatus, radiationValue } from '..
 import { ACTIVITY, METRICS, STATUS, fmt, signed, statusPill, clockOf, escapeHtml, isNum } from '../format.mjs';
 import { sparkline } from '../charts.mjs';
 import { issuesForRegion } from '../issues.mjs';
+import { setHTML } from '../dom.mjs';
 
 const PROVENANCE_KEY = {
   heart_rate_bpm: 'heart_rate_bpm', systolic_mmhg: 'blood_pressure', diastolic_mmhg: 'blood_pressure',
@@ -60,7 +61,7 @@ function checkinBlock(ctx, astronautId) {
   const entry = s.entries.at(-1);
   const sb = s.baseline;
   return `<section class="side-section side-section--human">
-    <p class="muted small"><span class="tag tag--human">Human input · wall clock</span> Separate from the simulated stream. Display only — check-ins never open alerts.</p>
+    <p class="muted small"><span class="tag tag--human">Human input · wall clock</span> Separate from the simulated stream. Display only: check-ins never open alerts.</p>
     <div class="checkin-card">
       <span class="label">Reaction test (latest)</span>
       ${last ? `<strong class="mono">${fmt(last.median_reaction_time_ms, 'median_reaction_time_ms')}</strong>
@@ -98,7 +99,7 @@ export function mountSidebar(el, ctx) {
 
   return function render() {
     const f = feed.state.frame;
-    if (!f) { el.innerHTML = '<div class="side-empty">Waiting for the simulator…<br><span class="muted small">Start it with <code>python3 server/server.py</code></span></div>'; return; }
+    if (!f) { setHTML(el, '<div class="side-empty">Waiting for the simulator…<br><span class="muted small">Start it with <code>python3 server/server.py</code></span></div>'); return; }
     const s = store.get();
     const live = feed.connection === 'live';
     const a = f.astronauts.find((x) => x.id === s.astronaut);
@@ -106,7 +107,7 @@ export function mountSidebar(el, ctx) {
     const organ = s.organ && ORGAN_BY_ID[s.organ];
 
     if (!organ) {
-      el.innerHTML = `
+      setHTML(el, `
         <header class="side-head"><div><span class="card-kicker">Recommendations</span>
           <h3>Body regions</h3></div>${statusPill(live ? a.alert_status : 'unavailable')}</header>
         <p class="hint">Click a point on the body, or a region below, to isolate its organs and nerves.</p>
@@ -120,7 +121,7 @@ export function mountSidebar(el, ctx) {
             <span class="sr-only">${STATUS[st.status].label}</span></button></li>`;
         }).join('')}</ul>
         ${alertsBlock(f, a)}
-        <p class="footnote">Normal means within this person's own range on synthetic data — not proof of good health. Not a medical device.</p>`;
+        <p class="footnote">Normal means within this person's own range on synthetic data. It is not proof of good health. Not a medical device.</p>`);
       return;
     }
 
@@ -146,7 +147,7 @@ export function mountSidebar(el, ctx) {
         <ol class="checks">${organ.checks.map((c) => `<li>${c}</li>`).join('')}</ol>
         <p class="footnote">Non-diagnostic prompts tied to the rule that fired. Follow mission procedures; WIASE does not diagnose or treat.</p></section>`;
     } else panel = checkinBlock(ctx, a.id);
-    el.innerHTML = `
+    setHTML(el, `
       <header class="side-head side-head--${st.status}">
         <div><span class="card-kicker">Region</span><h3>${organ.label}</h3></div>
         <button type="button" class="icon-btn" data-close-organ aria-label="Close region details">✕</button>
@@ -155,7 +156,7 @@ export function mountSidebar(el, ctx) {
         ${st.alerts.map((al) => `<p class="evidence-line"><strong>${escapeHtml(al.label)}</strong> · opened ${clockOf(al.opened_at)} sim UTC${al.target === 'cabin' ? ' · shared cabin' : ''}</p>`).join('')}
         ${issuesForRegion(ctx.issues(), organ.id, a.id).map((x) => `<button type="button" class="btn btn--small${x.level === 'alert' ? ' btn--primary' : ''} banner-btn" data-issue="${x.id}">Response steps: ${escapeHtml(x.title)} →</button>`).join('')}</div>
       <div class="tabs tabs--small" role="tablist">${tabs.map(([k, l]) => `<button type="button" role="tab" data-region-tab="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
-      <div class="side-panel">${panel}</div>`;
+      <div class="side-panel">${panel}</div>`);
   };
 }
 

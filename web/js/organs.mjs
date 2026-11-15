@@ -130,7 +130,7 @@ export const ORGANS = [
     cabinMetrics: ['temperature_c', 'relative_humidity_pct'],
     rules: [],
     cabinRules: ['cabin_heat_humidity'],
-    about: 'Shared cabin temperature and humidity — the thermal load on the skin. The hypothalamus drives the body’s heat response; peripheral nerves sense it.',
+    about: 'Shared cabin temperature and humidity: the thermal load on the skin. The hypothalamus drives the body’s heat response; peripheral nerves sense it.',
     explain: {
       alert: 'Cabin temperature and humidity are both above baseline (confirmed). This is a shared environmental condition, not a measurement of the astronaut.',
       watch: 'Cabin temperature or humidity is above its threshold; the rule needs both to confirm.',

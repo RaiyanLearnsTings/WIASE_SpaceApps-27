@@ -20,9 +20,9 @@ export const PVT = {
 };
 
 export const TASKS = {
-  simple: { label: 'Tap', cue: 'Tap — respond when the circle appears' },
-  gonogo: { label: 'Go / No-Go', cue: 'Go / No-Go — respond to crimson only, hold on yellow' },
-  choice: { label: 'Left / Right', cue: 'Left / Right — respond in the arrow’s direction' },
+  simple: { label: 'Tap', cue: 'Tap: respond when the circle appears' },
+  gonogo: { label: 'Go / No-Go', cue: 'Go / No-Go: respond to crimson only, hold on yellow' },
+  choice: { label: 'Left / Right', cue: 'Left / Right: respond in the arrow’s direction' },
 };
 export const TASK_IDS = Object.keys(TASKS);
 export const ERROR_OUTCOMES = ['commission', 'wrong_response'];

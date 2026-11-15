@@ -5,6 +5,8 @@
 import { clockOf, elapsedLabel, durationLabel, escapeHtml } from '../format.mjs';
 import { openDialog, toast } from './dialog.mjs';
 import { openShortcutHelp } from '../shortcuts.mjs';
+import { withTransition } from '../transition.mjs';
+import { setHTML, effectsPreference, setEffectsPreference, liteMode, lowPowerDevice } from '../dom.mjs';
 
 const DURATIONS = [5, 15, 30, 60];
 
@@ -25,35 +27,46 @@ function timelineHtml(run) {
 export function mountTopbar(el, ctx) {
   const { store, feed, api } = ctx;
   const replay = ctx.mode === 'replay';
-  el.innerHTML = `
-    <div class="brand" aria-label="WIASE crew health console"><span class="brand__mark" aria-hidden="true">//</span><strong>WIASE</strong></div>
-    <div class="group">
+  // Five groups, separated by rules so the bar reads as zones rather than one strip of controls:
+  // identity · mission setting · playback (timeline + speed) · clock & feed status · actions.
+  // On narrower screens the zones wrap onto rows (CSS grid areas) instead of overflowing.
+  setHTML(el, `
+    <div class="tb-zone tb-brand"><div class="brand" aria-label="WIASE crew health console"><span class="brand__mark" aria-hidden="true">//</span><strong>WIASE</strong></div></div>
+    <div class="tb-zone tb-env">
       <div class="segmented" role="group" aria-label="Operating environment">
         <button type="button" data-mode="deep">Deep Space</button><button type="button" data-mode="iss">ISS</button>
       </div>
       <span class="mono muted small" id="delay" title="Illustrative one-way communication delay (assumption)"></span>
     </div>
-    ${replay ? timelineHtml(ctx.run) : '<span class="spacer"></span>'}
-    <div class="clockblock" title="Simulated mission time (UTC) and time since the run started">
-      <span class="mono clock" id="sim-clock">--:--:--</span><span class="mono muted small" id="elapsed">T+—</span>
+    <div class="tb-zone tb-play${replay ? '' : ' tb-play--live'}">
+      ${replay ? timelineHtml(ctx.run) : ''}
+      <div class="segmented segmented--quiet" role="group" aria-label="Simulation speed">
+        <button type="button" data-speed="1">1×</button><button type="button" data-speed="10">10×</button><button type="button" data-speed="60">60×</button>
+      </div>
     </div>
-    <div class="segmented segmented--quiet" role="group" aria-label="Simulation speed">
-      <button type="button" data-speed="1">1×</button><button type="button" data-speed="10">10×</button><button type="button" data-speed="60">60×</button>
+    <div class="tb-zone tb-clock clockblock" title="Simulated mission time (UTC), time since the run started, and feed status">
+      <span class="mono clock" id="sim-clock">--:--:--</span>
+      <span class="tb-clock__sub"><span class="mono muted small" id="elapsed">T+—</span><span class="conn" id="conn" role="status"></span></span>
     </div>
-    <span class="conn" id="conn" role="status"></span>
-    <span class="topbar__rule" aria-hidden="true"></span>
-    <button type="button" class="btn btn--primary" id="sim-btn">Simulate <span class="count" id="sc-count"></span></button>
-    <button type="button" class="btn" id="tour-btn" title="Guided tour of WIASE">Tour</button>
-    <button type="button" class="btn" id="about-btn" title="About, data &amp; validation (I)" aria-keyshortcuts="I">About</button>
-    <button type="button" class="icon-btn" id="keys-top" aria-label="Keyboard shortcuts" aria-keyshortcuts="Shift+?" title="Keyboard shortcuts (?)">
-      <svg viewBox="0 0 18 12" width="18" height="12" aria-hidden="true"><rect x=".75" y=".75" width="16.5" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/>
-      <path d="M3.5 3.5h1.5M6.5 3.5h1.5M9.5 3.5h1.5M12.5 3.5h1.5M3.5 6h1.5M6.5 6h1.5M9.5 6h1.5M12.5 6h1.5M5 8.5h8" stroke="currentColor" stroke-width="1.3"/></svg></button>
-    <button type="button" class="icon-btn" id="settings-btn" aria-label="Settings and export">⚙</button>`;
+    <div class="tb-zone tb-actions">
+      <button type="button" class="btn btn--primary" id="sim-btn">Simulate <span class="count" id="sc-count"></span></button>
+      <button type="button" class="btn" id="tour-btn" title="Guided tour of WIASE">Tour</button>
+      <button type="button" class="btn" id="about-btn" title="About, data &amp; validation (I)" aria-keyshortcuts="I">About</button>
+      <button type="button" class="icon-btn" id="keys-top" aria-label="Keyboard shortcuts" aria-keyshortcuts="Shift+?" title="Keyboard shortcuts (?)">
+        <svg viewBox="0 0 18 12" width="18" height="12" aria-hidden="true"><rect x=".75" y=".75" width="16.5" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M3.5 3.5h1.5M6.5 3.5h1.5M9.5 3.5h1.5M12.5 3.5h1.5M3.5 6h1.5M6.5 6h1.5M9.5 6h1.5M12.5 6h1.5M5 8.5h8" stroke="currentColor" stroke-width="1.3"/></svg></button>
+      <button type="button" class="icon-btn" id="settings-btn" aria-label="Settings and export">⚙</button>
+    </div>`);
 
   const q = (s) => el.querySelector(s);
   el.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => store.set({ mode: b.dataset.mode })));
   el.querySelectorAll('[data-speed]').forEach((b) => b.addEventListener('click', async () => {
-    try { feed.accept(await api.speed(Number(b.dataset.speed))); } catch (e) { toast(e.message, 'error'); }
+    const next = Number(b.dataset.speed);
+    const now = feed.state.frame?.clock.speed;
+    if (next === now && !feed.paused) return;
+    try {
+      await withTransition(now ? `Switching ${now}× → ${next}×` : `Speed ${next}×`, async () => feed.accept(await api.speed(next)));
+    } catch (e) { toast(e.message, 'error'); }
   }));
   q('#sim-btn').addEventListener('click', () => openSimulate(ctx));
   q('#settings-btn').addEventListener('click', () => openSettings(ctx));
@@ -135,7 +148,10 @@ export function mountTopbar(el, ctx) {
       wheelTimer = setTimeout(() => { wheelTimer = 0; wheelAcc = 0; if (!drag) feed.hold(false); }, 350);
       queue((pending ?? Math.max(0, feed.index)) + steps);
     }, { passive: false });
-    el.querySelectorAll('[data-chapter]').forEach((b) => b.addEventListener('click', () => api.trigger(b.dataset.chapter)));
+    el.querySelectorAll('[data-chapter]').forEach((b) => b.addEventListener('click', () => {
+      const c = ctx.run.chapters.find((x) => x.id === b.dataset.chapter);
+      withTransition(`Jumping to ${c?.label || 'chapter'}`, () => api.trigger(b.dataset.chapter));
+    }));
   }
 
   return function render() {
@@ -145,7 +161,7 @@ export function mountTopbar(el, ctx) {
     const label = ctx.mode === 'replay' && feed.connection === 'live' ? 'Recorded'
       : { connecting: 'Connecting', live: 'Live', stale: 'Stale', offline: 'Offline' }[feed.connection];
     conn.className = `conn conn--${feed.connection}${ctx.mode === 'replay' ? ' conn--replay' : ''}`;
-    conn.innerHTML = `<span class="conn__dot" aria-hidden="true"></span><span class="conn__label">${label}</span><span class="sr-only"> simulator connection</span>`;
+    setHTML(conn, `<span class="conn__dot" aria-hidden="true"></span><span class="conn__label">${label}</span><span class="sr-only"> simulator connection</span>`);
     conn.title = ctx.mode === 'replay' ? `Pre-recorded run of the WIASE simulator (synthetic data). Chapter: ${feed.currentChapter().label}. Run the Python server locally for the live simulator.`
       : feed.lastMessageAt ? `Last frame received ${new Date(feed.lastMessageAt).toISOString().slice(11, 19)} UTC (wall clock)` : '';
     q('#sim-clock').textContent = f ? `${clockOf(f.clock.simulated_at)} UTC` : '--:--:-- UTC';
@@ -164,9 +180,9 @@ export function mountTopbar(el, ctx) {
     const icon = feed.paused ? 'play' : 'pause';
     if (play.dataset.icon !== icon) {
       play.dataset.icon = icon;
-      play.innerHTML = feed.paused
+      setHTML(play, feed.paused
         ? '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>'
-        : '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 1.5h2.6v9H2.5zM6.9 1.5h2.6v9H6.9z" fill="currentColor"/></svg>';
+        : '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 1.5h2.6v9H2.5zM6.9 1.5h2.6v9H6.9z" fill="currentColor"/></svg>');
     }
     play.setAttribute('aria-label', feed.paused ? 'Play recording (P)' : 'Pause recording (P)');
     play.title = play.getAttribute('aria-label');
@@ -194,19 +210,19 @@ function openSimulate(ctx) {
     if (!f) return;
     if (replay) {
       const now = feed.currentChapter().id;
-      body.innerHTML = `<p class="muted">This is a recorded run of the WIASE simulator. Jump to any moment; the dashboard updates as if it were live.</p>
+      setHTML(body, `<p class="muted">This is a recorded run of the WIASE simulator. Jump to any moment; the dashboard updates as if it were live.</p>
         <ol class="sim-list">${ctx.run.chapters.map((c, i) => `<li class="sim-row${c.id === now ? ' is-current' : ''}">
           <span class="sim-row__n mono">${String(i + 1).padStart(2, '0')}</span>
           <div><strong>${escapeHtml(c.label)}</strong><span class="muted small">${escapeHtml(c.description)}</span></div>
           <button type="button" class="btn btn--small" data-jump="${c.id}">${c.id === now ? 'Playing' : 'Jump'}</button></li>`).join('')}</ol>
-        <div class="row"><button type="button" class="btn" data-restart>Restart from the beginning</button></div>`;
+        <div class="row"><button type="button" class="btn" data-restart>Restart from the beginning</button></div>`);
       return;
     }
     const crew = f.astronauts;
     const active = f.active_scenarios;
     if (body.contains(document.activeElement) && document.activeElement.matches('select')) return;
     const keep = { target: body.querySelector('#sc-target')?.value || store.get().astronaut, duration: body.querySelector('#sc-duration')?.value || '15' };
-    body.innerHTML = `<p class="muted">Inject a synthetic change and watch detection, the alert and recovery. Alerts confirm after 12 simulated seconds.</p>
+    setHTML(body, `<p class="muted">Inject a synthetic change and watch detection, the alert and recovery. Alerts confirm after 12 simulated seconds.</p>
       <div class="row sim-opts">
         <label class="field">Crew target<select id="sc-target">${crew.map((a) => `<option value="${a.id}" ${a.id === keep.target ? 'selected' : ''}>${a.name}</option>`).join('')}</select></label>
         <label class="field">Duration<select id="sc-duration">${DURATIONS.map((m) => `<option value="${m}" ${String(m) === keep.duration ? 'selected' : ''}>${m} sim min</option>`).join('')}</select></label>
@@ -219,14 +235,22 @@ function openSimulate(ctx) {
           <button type="button" class="btn btn--small" data-trigger="${sc.id}" data-scope="${sc.scope}">Trigger</button></li>`;
       }).join('')}</ol>
       <div class="row"><button type="button" class="btn" data-clear ${active.length ? '' : 'disabled'}>Clear all scenarios</button>
-        <span class="spacer"></span><button type="button" class="btn" data-reset title="Restart the simulated clock and clear scenarios">Reset run</button></div>`;
+        <span class="spacer"></span><button type="button" class="btn" data-reset title="Restart the simulated clock and clear scenarios">Reset run</button></div>`);
   };
   body.addEventListener('click', async (e) => {
     const t = e.target.closest('[data-jump],[data-restart],[data-trigger],[data-clear],[data-reset]');
     if (!t) return;
     try {
-      if (t.dataset.jump) { await api.trigger(t.dataset.jump); dlg.close(); toast(`Jumped to: ${ctx.run.chapters.find((c) => c.id === t.dataset.jump).label}`); }
-      else if ('restart' in t.dataset || 'reset' in t.dataset) { feed.accept(await api.reset()); dlg.close(); toast(replay ? 'Recording restarted.' : 'Simulation reset — new run started.'); }
+      if (t.dataset.jump) {
+        const label = ctx.run.chapters.find((c) => c.id === t.dataset.jump).label;
+        dlg.close();
+        await withTransition(`Jumping to ${label}`, () => api.trigger(t.dataset.jump));
+        toast(`Jumped to: ${label}`);
+      } else if ('restart' in t.dataset || 'reset' in t.dataset) {
+        dlg.close();
+        await withTransition(replay ? 'Restarting the recording' : 'Resetting the simulation', async () => feed.accept(await api.reset()));
+        toast(replay ? 'Recording restarted.' : 'Simulation reset. A new run has started.');
+      }
       else if ('clear' in t.dataset) feed.accept(await api.clear());
       else {
         const target = t.dataset.scope === 'cabin' ? 'cabin' : body.querySelector('#sc-target').value;
@@ -246,22 +270,39 @@ function openSettings(ctx) {
   const s = store.get();
   const body = document.createElement('form');
   body.className = 'settings';
-  body.innerHTML = `
+  setHTML(body, `
     <label class="field">One-way communication delay in Deep Space mode: <strong id="delay-out">${s.delayMin} min</strong>
       <input type="range" min="1" max="22" step="1" value="${s.delayMin}" name="delay">
     </label>
     <p class="muted small">Illustrative assumption (Mars one-way light time is roughly 3–22 minutes). It only affects simulated
       ground-review packets. ISS mode is simplified to a zero-delay link.</p>
     <hr>
+    <div class="row"><div><strong>Visual effects</strong><p class="muted small" id="fx-note"></p></div>
+      <span class="spacer"></span>
+      <div class="segmented" role="group" aria-label="Visual effects">
+        <button type="button" data-fx="auto">Auto</button><button type="button" data-fx="off">Full</button><button type="button" data-fx="on">Reduced</button>
+      </div></div>
+    <hr>
     <div class="row"><div><strong>Export session</strong><p class="muted small">Current state, history, events, acknowledgements and check-ins as one JSON file, with provenance.</p></div>
       <span class="spacer"></span><button type="button" class="btn" id="export-btn">Export JSON ↓</button></div>
     <hr>
     <div class="row"><div><strong>Keyboard shortcuts</strong><p class="muted small">Open astronauts and pages, pause the recording, read chart values. Press <kbd>?</kbd> any time.</p></div>
-      <span class="spacer"></span><button type="button" class="btn" id="keys-btn">Show shortcuts</button></div>`;
+      <span class="spacer"></span><button type="button" class="btn" id="keys-btn">Show shortcuts</button></div>`);
   body.delay.addEventListener('input', () => {
     body.querySelector('#delay-out').textContent = `${body.delay.value} min`;
     store.set({ delayMin: Number(body.delay.value) });
   });
+  const fx = () => {
+    const pref = effectsPreference();
+    body.querySelectorAll('[data-fx]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.fx === pref)));
+    body.querySelector('#fx-note').textContent = `${liteMode() ? 'Reduced: no background blur, lighter 3D rendering.' : 'Full: background blur and full-resolution 3D.'}${
+      pref === 'auto' ? ` Chosen automatically for this device${lowPowerDevice() ? ' (low-power)' : ''}.` : ''}`;
+  };
+  body.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fx]');
+    if (b) { setEffectsPreference(b.dataset.fx); fx(); }
+  });
+  fx();
   body.querySelector('#export-btn').addEventListener('click', () => ctx.exportSession());
   body.querySelector('#keys-btn').addEventListener('click', () => openShortcutHelp(ctx));
   openDialog({ kicker: 'Preferences', title: 'Settings', body });

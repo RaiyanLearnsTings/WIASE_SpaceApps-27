@@ -24,8 +24,12 @@ export class BodyViewer {
     this.tween = null;
     this.source = 'loading';
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Reduced-effects ("lite") mode: no MSAA and 1× pixels — the canvas is large, so on a 2× screen that
+    // is a quarter of the fragment work. Otherwise cap at 1.5×, which still looks sharp at this size.
+    const lite = document.documentElement.classList.contains('lite');
+    this.renderer = new THREE.WebGLRenderer({ antialias: !lite, alpha: true, powerPreference: 'high-performance' });
+    this.setQuality(lite);
+    document.addEventListener('wiase:effects', (e) => { this.setQuality(e.detail.lite); this.resize(); });
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.domElement.className = 'viewer__canvas';
     container.append(this.renderer.domElement);
@@ -49,6 +53,9 @@ export class BodyViewer {
     this.controls.keys = { LEFT: 'ArrowLeft', UP: 'ArrowUp', RIGHT: 'ArrowRight', BOTTOM: 'ArrowDown' };
     this.controls.listenToKeyEvents(container);
     this.controls.update();
+    // Render on demand: user input (and damping that follows it) marks the view dirty.
+    this.dirty = true;
+    this.controls.addEventListener('change', () => { this.dirty = true; });
 
     this.hotspots = createHotspotLayer(container, (id) => this.onSelect(id));
     this.raycaster = new THREE.Raycaster();
@@ -86,6 +93,12 @@ export class BodyViewer {
     this.pickable = this.meshes.filter((m) => m.userData.structure !== 'skin');
     this.applyPaint();
     settle(this.meshes);
+    this.dirty = true;
+  }
+
+  setQuality(lite) {
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lite ? 1 : 1.5));
+    this.dirty = true;
   }
 
   buildPlatform() {
@@ -114,10 +127,20 @@ export class BodyViewer {
       const id = this.pick(e);
       if (id) this.onSelect(id);
     });
+    // Hover cursor: ray-casting every organ mesh is costly and touchpads fire moves far faster than the
+    // screen refreshes, so pick at most once per frame, with the latest pointer position.
+    let hover = null;
     canvas.addEventListener('pointermove', (e) => {
       if (e.buttons) return;
-      canvas.style.cursor = this.pick(e) ? 'pointer' : 'grab';
-    });
+      const queued = hover;
+      hover = { clientX: e.clientX, clientY: e.clientY };
+      if (queued) return;
+      requestAnimationFrame(() => {
+        const cursor = this.pick(hover) ? 'pointer' : 'grab';
+        if (canvas.style.cursor !== cursor) canvas.style.cursor = cursor;
+        hover = null;
+      });
+    }, { passive: true });
   }
 
   pick(event) {
@@ -132,6 +155,7 @@ export class BodyViewer {
     const { clientWidth: w, clientHeight: h } = this.container;
     if (!w || !h) return;
     this.renderer.setSize(w, h, false);
+    this.dirty = true;
     const first = !this.sized;
     this.sized = true;
     this.camera.aspect = w / h;
@@ -170,6 +194,7 @@ export class BodyViewer {
   applyPaint() {
     paint(this.meshes, this.statuses, this.selected);
     if (reducedMotion()) settle(this.meshes);
+    this.dirty = true;
   }
 
   focus(point, distance) {
@@ -183,6 +208,7 @@ export class BodyViewer {
   }
 
   animateTo(position, target) {
+    this.dirty = true;
     if (reducedMotion()) {
       this.camera.position.copy(position);
       this.controls.target.copy(target);
@@ -197,27 +223,35 @@ export class BodyViewer {
 
   frame() {
     // The viewer element is re-parented into the astronaut page; skip work while it is detached.
-    if (document.hidden || !this.container.isConnected || !this.container.clientWidth) return;
+    // isConnected is cheap; the size read (layout) only happens when a redraw is actually due.
+    if (document.hidden || !this.container.isConnected) { this.dirty = true; return; }
     if (this.tween) {
       const t = Math.min(1, (performance.now() - this.tween.start) / this.tween.duration);
       const k = ease(t);
       this.camera.position.lerpVectors(this.tween.fromPos, this.tween.toPos, k);
       this.controls.target.lerpVectors(this.tween.fromTarget, this.tween.toTarget, k);
       if (t === 1) this.tween = null;
+      this.dirty = true;
     }
-    this.controls.update();
+    if (this.controls.update()) this.dirty = true; // true while damping is still moving the camera
 
     for (const m of this.meshes) {
       const d = m.userData;
       if (Math.abs(d.opacity - d.target) > 0.002) {
         d.opacity += (d.target - d.opacity) * 0.15;
+        if (Math.abs(d.opacity - d.target) <= 0.002) d.opacity = d.target; // land exactly, then stop
         if (m.material.uniforms) m.material.uniforms.uOpacity.value = d.opacity;
         else m.material.opacity = Math.min(1, d.opacity);
         m.visible = d.opacity > 0.01;
+        this.dirty = true;
       }
     }
+    // Nothing moved or changed: keep the last image (no GPU work, no hotspot layout).
+    if (!this.dirty) return;
+    this.dirty = false;
 
     const { clientWidth: w, clientHeight: h } = this.container;
+    if (!w || !h) { this.dirty = true; return; }
     const centerDist = this.camera.position.distanceTo(this.controls.target);
     const v = new THREE.Vector3();
     for (const organ of ORGANS) {

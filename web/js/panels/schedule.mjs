@@ -4,6 +4,7 @@
 import { durationLabel, dayOf, escapeHtml } from '../format.mjs';
 import { toast } from './dialog.mjs';
 import { cardHead } from './card.mjs';
+import { setHTML } from '../dom.mjs';
 
 export const MISSION_TASKS = [
   { id: 'cabin', at: 12 * 60, title: 'Cabin review', detail: 'Verify CO₂, thermal and noise inputs' },
@@ -80,7 +81,7 @@ function queuePacket(ctx, f) {
     summary: `Crew review · ${alerts} active alert${alerts === 1 ? '' : 's'} (incl. cabin)`,
   };
   ctx.store.set({ packets: [packet, ...s.packets].slice(0, 12) });
-  toast(s.mode === 'deep' ? `Packet queued — arrives in ${s.delayMin} simulated min.` : 'Packet queued (ISS: zero-delay simplification).');
+  toast(s.mode === 'deep' ? `Packet queued. It arrives in ${s.delayMin} simulated min.` : 'Packet queued (ISS: zero-delay simplification).');
 }
 
 function packetsHtml(ctx, f, limit) {
@@ -99,13 +100,13 @@ const testButton = (state, t, a, compact) => `<button type="button" class="test-
 
 export function mountSchedule(el, ctx) {
   const { feed } = ctx;
-  el.innerHTML = `${cardHead({ idx: '02', title: 'To-do', page: 'todo' })}
+  setHTML(el, `${cardHead({ idx: '02', title: 'To-do', page: 'todo' })}
     <div class="todo-card">
       <div class="progress" aria-hidden="true"><span id="todo-bar"></span></div>
       <h4>Next up</h4>
       <ol class="tasks" id="todo-next"></ol>
     </div>
-    <footer class="card__foot"><span id="todo-count"></span><span id="todo-link" class="muted"></span></footer>`;
+    <footer class="card__foot"><span id="todo-count"></span><span id="todo-link" class="muted"></span></footer>`);
   el.dataset.expandCard = 'todo';
   el.addEventListener('click', (e) => onAction(ctx, e));
 
@@ -121,14 +122,14 @@ export function mountSchedule(el, ctx) {
     const next = items.filter((t) => t.state !== 'done')
       .sort((x, y) => (x.state === 'due' ? 0 : 1) - (y.state === 'due' ? 0 : 1) || x.at - y.at).slice(0, 3);
     el.querySelector('#todo-bar').style.width = `${(done / items.length) * 100}%`;
-    el.querySelector('#todo-next').innerHTML = next.length ? next.map((t) => `<li class="task task--${t.state}">
+    setHTML(el.querySelector('#todo-next'), next.length ? next.map((t) => `<li class="task task--${t.state}">
       <span class="task__time mono">${hhmm(t.at)}</span>
       <div><strong>${t.title}</strong><span class="muted small">${t.who === 'Crew' ? 'Whole crew' : `${t.who} · ${f.astronauts.find((a) => a.id === t.astronaut).name}`}</span></div>
       ${t.state === 'due'
         ? (t.test ? `<button type="button" class="btn btn--small" data-test="${t.test}" data-astronaut="${t.astronaut}">Start</button>`
           : `<button type="button" class="btn btn--small" data-done="${t.done}">Done</button>`)
         : '<span class="task__state">Later</span>'}</li>`).join('')
-      : '<li class="state state--ok"><strong>All done for today</strong></li>';
+      : '<li class="state state--ok"><strong>All done for today</strong></li>');
     el.querySelector('#todo-count').textContent = `${done}/${items.length} done${due ? ` · ${due} due` : ''}`;
     const s = ctx.store.get();
     el.querySelector('#todo-link').textContent = `Ground link ${s.mode === 'deep' ? `· ${s.delayMin} min` : '· ISS'}`;
@@ -140,7 +141,7 @@ export const todoPage = {
   kicker: (ctx) => { const f = ctx.feed.state.frame; return f ? `Mission day ${dayOf(f.clock.simulated_at)} · simulated clock` : 'Mission'; },
   title: () => 'To-do list',
   mount(body, ctx) {
-    body.innerHTML = `
+    setHTML(body, `
       <div class="todo-page">
         <section class="panel todo-page__mission">
           <header class="panel__head"><h3>Overall mission</h3><span class="muted small" id="tp-env"></span></header>
@@ -154,7 +155,7 @@ export const todoPage = {
           <p class="footnote">Reaction test: 45 s of three games mixed at random (Tap, Go/No-Go, Left/Right). Daily check-in: six 1–5 items (higher = more concern). Results appear on each astronaut's Brain region.</p>
         </section>
         <div class="todo-page__people" id="tp-people"></div>
-      </div>`;
+      </div>`);
     body.addEventListener('click', (e) => onAction(ctx, e));
     return {
       render() {
@@ -162,24 +163,24 @@ export const todoPage = {
         if (!f) return;
         const s = ctx.store.get();
         body.querySelector('#tp-env').textContent = s.mode === 'deep' ? `Deep Space · ${s.delayMin} min one-way` : 'ISS · near-real-time';
-        body.querySelector('#tp-mission').innerHTML = MISSION_TASKS.map((t) => {
+        setHTML(body.querySelector('#tp-mission'), MISSION_TASKS.map((t) => {
           const st = missionState(ctx, t, f);
           return `<li class="task task--${st}"><span class="task__time mono">${hhmm(t.at)}</span>
             <div><strong>${t.title}</strong><span class="muted small">${t.detail}</span></div>
             ${st === 'done' ? `<span class="task__state">${STATE_LABEL.done}</span>` : `<button type="button" class="btn btn--small${st === 'due' ? ' btn--primary' : ''}" data-done="${t.id}">Mark done</button>`}</li>`;
-        }).join('');
-        body.querySelector('#tp-packets').innerHTML = packetsHtml(ctx, f, 3);
-        body.querySelector('#tp-tests').innerHTML = f.astronauts.map((a, i) => `<div class="take-test__col">
+        }).join(''));
+        setHTML(body.querySelector('#tp-packets'), packetsHtml(ctx, f, 3));
+        setHTML(body.querySelector('#tp-tests'), f.astronauts.map((a, i) => `<div class="take-test__col">
           <span class="take-test__who">P${i + 1} · ${a.name}</span>
           ${TESTS.map((t) => { const st = testState(ctx, a, t, f); return `<button type="button" class="test-tile test-tile--${st}" data-test="${t.id}" data-astronaut="${a.id}">
             <span>${t.title}</span><b>${st === 'done' ? '✓ Done · repeat' : st === 'due' ? 'Due · start' : `Scheduled ${hhmm(t.at)}`}</b></button>`; }).join('')}
-          </div>`).join('');
-        body.querySelector('#tp-people').innerHTML = f.astronauts.map((a, i) => `<section class="panel person-tasks">
+          </div>`).join(''));
+        setHTML(body.querySelector('#tp-people'), f.astronauts.map((a, i) => `<section class="panel person-tasks">
           <header class="panel__head"><h3>P${i + 1} tasks</h3><span class="muted small">${a.name}</span></header>
           <ol class="tasks tasks--tight">${personalTasks(ctx, a, f).map((t) => `<li class="task task--${t.state}">
             <span class="task__time mono">${hhmm(t.at)}</span><div><strong>${t.title}</strong><span class="muted small">${t.detail}</span></div>
             ${t.action ? `<button type="button" class="btn btn--small${t.state === 'due' ? ' btn--primary' : ''}" data-test="${t.action}" data-astronaut="${a.id}">${t.state === 'done' ? 'Repeat' : 'Start'}</button>`
-              : `<span class="task__state">${STATE_LABEL[t.state]}</span>`}</li>`).join('')}</ol></section>`).join('');
+              : `<span class="task__state">${STATE_LABEL[t.state]}</span>`}</li>`).join('')}</ol></section>`).join(''));
       },
     };
   },

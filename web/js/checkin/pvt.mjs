@@ -150,8 +150,8 @@ export function openReaction(ctx) {
         <div><span class="label">Good holds</span><strong class="mono big">${r.correct_withholds ?? local.correct_withholds}</strong></div>
       </div>
       <div class="pvt__bytask">${byTask}</div>
-      ${r.sufficient ? '' : `<p class="warn">Fewer than ${PVT.minValidTrials} valid trials — marked insufficient and excluded from the baseline.</p>`}
-      ${interrupted ? '<p class="warn">Session interrupted — kept for the record but excluded from the baseline.</p>' : ''}
+      ${r.sufficient ? '' : `<p class="warn">Fewer than ${PVT.minValidTrials} valid trials, so the session is marked insufficient and excluded from the baseline.</p>`}
+      ${interrupted ? '<p class="warn">Session interrupted. It is kept for the record but excluded from the baseline.</p>' : ''}
       <p class="${error ? 'warn' : 'muted small'}">${error ? `Not saved: ${error}` : `Saved for ${name}. Results appear under Brain & nervous system.`}</p>
       <button type="button" class="btn" id="again">Run again</button>`;
     q('#again').addEventListener('click', intro);

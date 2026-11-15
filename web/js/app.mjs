@@ -25,6 +25,7 @@ import { exportSession } from './export.mjs';
 import { FallbackViewer } from './body/fallback2d.mjs';
 import { escapeHtml } from './format.mjs';
 import { installShortcuts } from './shortcuts.mjs';
+import { applyEffects, checkFrameRate } from './dom.mjs';
 
 const $ = (id) => document.getElementById(id);
 const store = createStore();
@@ -139,6 +140,12 @@ const ctx = {
 };
 const pages = createPageHost(ctx);
 ctx.pages = pages;
+// First page opened: check real frame pacing; a struggling GPU gets reduced effects for this visit.
+const openPageHost = pages.open;
+pages.open = (page) => {
+  openPageHost(page);
+  checkFrameRate({ onSwitch: () => toast('Switched to reduced visual effects for smoother performance (Settings → Visual effects).') });
+};
 ctx.tour = createTour(ctx);
 installShortcuts(ctx);
 
@@ -190,20 +197,46 @@ function remountCrew() {
   scheduleRender();
 }
 
+// Rendering is batched to one pass per animation frame and only touches what can be seen:
+//  - nothing while the tab is hidden (one catch-up pass when it is shown again)
+//  - while a page or dialog covers the dashboard, the dashboard is not updated (it is blurred behind the
+//    backdrop, and every change underneath makes the browser recompute that blur); it catches up on close
+//  - while a dialog sits over a page, the page waits too (dialogs keep themselves up to date)
+//  - the 1 s wall-clock tick only refreshes the To-do countdowns, not the whole app
+const dialogEl = $('dialog');
 let queued = false;
-function scheduleRender() {
+let full = false;          // a data/UI change is pending (vs. a countdown-only tick)
+let dashboardStale = true; // the dashboard missed updates while covered
+function scheduleRender(kind = 'full') {
+  if (kind === 'full') full = true;
   if (queued) return;
   queued = true;
-  requestAnimationFrame(() => { queued = false; render(); });
+  requestAnimationFrame(() => { queued = false; const f = full; full = false; render(f); });
 }
 
-function render() {
-  for (const [el, fn] of cards) withFocus(el, fn);
-  if (crewBuiltWith !== ctx.thumbs) remountCrew();
-  if (crewRender) withFocus($('card-crew'), crewRender);
-  if (pages.active) withFocus(ctx.pageEl, pages.render);
+function render(isFull = true) {
+  if (document.hidden) { dashboardStale = true; return; }
+  const dialogOpen = dialogEl?.open;
+  const covered = dialogOpen || !!pages.active;
+  if (!isFull) {
+    // Countdown tick: only the To-do card / page show wall-clock-driven values.
+    if (!covered) withFocus($('card-todo'), cards[2][1]);
+    else if (pages.active === 'todo' && !dialogOpen) withFocus(ctx.pageEl, pages.render);
+    return;
+  }
+  if (covered) dashboardStale = true;
+  else {
+    for (const [el, fn] of cards) withFocus(el, fn);
+    if (crewBuiltWith !== ctx.thumbs) remountCrew();
+    if (crewRender) withFocus($('card-crew'), crewRender);
+    dashboardStale = false;
+  }
+  if (pages.active && !dialogOpen) withFocus(ctx.pageEl, pages.render);
   if (feed.state.frame && ctx.viewer) ctx.viewer.setStatuses(ctx.regionStatuses(store.get().astronaut));
 }
+// Catch up as soon as a covering page/dialog closes or the tab becomes visible again.
+for (const el of [$('page'), dialogEl]) el?.addEventListener('close', () => scheduleRender());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleRender(); });
 
 // ---- events -------------------------------------------------------------------------------
 document.addEventListener('click', (e) => {
@@ -221,7 +254,7 @@ document.addEventListener('click', (e) => {
 feed.subscribe((_, reason) => {
   if (reason === 'new-run') {
     store.set({ packets: [], acks: {}, tasksDone: {}, responses: {} });
-    if (feed.state.sequence > 1 && mode === 'live') toast('New simulation run — local acknowledgements and packets cleared.');
+    if (feed.state.sequence > 1 && mode === 'live') toast('New simulation run. Local acknowledgements and packets were cleared.');
   }
   scheduleRender();
 });
@@ -235,9 +268,10 @@ store.subscribe((state, patch) => {
   scheduleRender();
 });
 
-// Tick the ground-link packet countdown even when no frame arrives.
-setInterval(scheduleRender, 1000);
+// Tick the ground-link packet countdown even when no frame arrives (To-do only).
+setInterval(() => scheduleRender('tick'), 1000);
 
+applyEffects();
 feed.start();
 loadMetadata();
 mountViewers();

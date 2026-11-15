@@ -28,7 +28,7 @@ export const PROTOCOLS = {
   },
   cognitive_stress: {
     title: 'Slower reactions and higher anxiety',
-    why: 'Slower reaction time, more lapses and higher anxiety raise the chance of errors in safety-critical work. Common drivers are fatigue, short sleep, workload, stress — or high cabin CO₂.',
+    why: 'Slower reaction time, more lapses and higher anxiety raise the chance of errors in safety-critical work. Common drivers are fatigue, short sleep, workload, stress or high cabin CO₂.',
     notice: ['Trouble concentrating', 'Headache', 'Irritability', 'Unusual tiredness'],
     steps: [
       [CREW, 'Pause or hand off safety-critical tasks; use two-person verification for anything that must continue.'],
@@ -85,7 +85,7 @@ export const PROTOCOLS = {
   },
   spo2_low: {
     title: 'Blood oxygen below personal range',
-    why: 'A low SpO₂ reading is often a cold finger or sensor movement, but a real drop matters. Telemetry only — no alert rule.',
+    why: 'A low SpO₂ reading is often a cold finger or sensor movement, but a real drop matters. Telemetry only; there is no alert rule for it.',
     notice: ['Breathlessness', 'Dizziness', 'Headache'],
     steps: [
       [CREW, 'Stay still, warm your hands and reseat the oximeter; re-measure.'],

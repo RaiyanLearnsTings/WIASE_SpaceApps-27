@@ -26,6 +26,13 @@ export class ReplayFeed {
     this.endedAt = null;
     this.paused = false;
     this.held = false; // temporary hold while the timeline is being dragged (not a user-visible pause)
+    this.frozen = false; // held by the guided tour: each step jumps to its chapter, nothing plays between
+  }
+
+  /** Tour hold: playback stops between chapter jumps (seek still works), separate from drag and pause. */
+  setFrozen(frozen) {
+    this.frozen = !!frozen;
+    this.carry = 0;
   }
 
   /** Stop the clock while someone drags the timeline, without changing the play/pause state. */
@@ -92,7 +99,7 @@ export class ReplayFeed {
   }
 
   tick(ms) {
-    if (this.paused || this.held) return;
+    if (this.paused || this.held || this.frozen) return;
     if (this.index >= this.last) {
       this.endedAt ??= this.now();
       if (this.now() - this.endedAt >= HOLD_AT_END_MS) this.seek(0); // loop the recording

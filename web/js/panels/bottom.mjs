@@ -4,11 +4,12 @@ import { drawCharts } from '../charts.mjs';
 import { cardHead } from './card.mjs';
 import { responseProgress } from './respond.mjs';
 import { clockOf, fmt, escapeHtml, statusPill } from '../format.mjs';
+import { setHTML, setText } from '../dom.mjs';
 
 const REASONS = {
   threshold_exceeded: 'threshold exceeded and confirmed',
   returned_to_baseline: 'returned within recovery band',
-  readings_unavailable: 'readings became unavailable — not a confirmed recovery',
+  readings_unavailable: 'readings became unavailable (not a confirmed recovery)',
 };
 const SERIES = ['var(--ink)', 'var(--aqua)', 'var(--steel-2)'];
 
@@ -37,9 +38,9 @@ const targetName = (f, target) => (target === 'cabin' ? 'Cabin' : f.astronauts.f
 
 export function mountBottom(el, ctx) {
   const { feed, store } = ctx;
-  el.innerHTML = `${cardHead({ idx: '01', title: 'Alerts', page: 'alerts' })}
+  setHTML(el, `${cardHead({ idx: '01', title: 'Alerts', page: 'alerts' })}
     <div class="alerts-card" id="al-body"></div>
-    <footer class="card__foot"><span id="al-events"></span><span class="muted">Steps, trends &amp; timeline inside</span></footer>`;
+    <footer class="card__foot"><span id="al-events"></span><span class="muted">Steps, trends &amp; timeline inside</span></footer>`);
   el.dataset.expandCard = 'alerts';
 
   return function render() {
@@ -51,12 +52,12 @@ export function mountBottom(el, ctx) {
     const watch = issues.filter((i) => i.level === 'watch');
     const body = el.querySelector('#al-body');
     if (!live) {
-      body.innerHTML = `<div class="state state--na"><strong>No live data</strong><span>Statuses are unknown — shown grey, never green.</span></div>`;
+      setHTML(body, `<div class="state state--na"><strong>No live data</strong><span>Statuses are unknown, so they show grey, not green.</span></div>`);
     } else if (!issues.length) {
-      body.innerHTML = `<div class="state state--ok"><span class="state__mark" aria-hidden="true"></span><strong>All clear</strong>
-        <span>All three astronauts and the cabin are inside their personal ranges.</span></div>`;
+      setHTML(body, `<div class="state state--ok"><span class="state__mark" aria-hidden="true"></span><strong>All clear</strong>
+        <span>All three astronauts and the cabin are inside their personal ranges.</span></div>`);
     } else {
-      body.innerHTML = `<div class="bigcount">${alerts.length
+      setHTML(body, `<div class="bigcount">${alerts.length
           ? `<strong class="mono">${alerts.length}</strong><span>active alert${alerts.length === 1 ? '' : 's'}</span>`
           : '<strong class="mono bigcount--quiet">0</strong><span>alerts</span>'}
           ${watch.length ? `<span class="bigcount__watch"><i class="sq sq--watch"></i>${watch.length} to watch</span>` : ''}</div>
@@ -68,7 +69,7 @@ export function mountBottom(el, ctx) {
             <span class="alert-row__text">${escapeHtml(x.title)}</span>
             <span class="alert-row__go mono">${pr.acked ? '✓ ack' : pr.done ? `${pr.done}/${pr.total}` : 'Steps'} →</span></button></li>`;
         }).join('')}
-          ${issues.length > 3 ? `<li class="muted small alert-rows__more">+${issues.length - 3} more inside</li>` : ''}</ul>`;
+          ${issues.length > 3 ? `<li class="muted small alert-rows__more">+${issues.length - 3} more inside</li>` : ''}</ul>`);
     }
     const pending = alerts.filter((x) => !responseProgress(ctx, x).acked).length;
     el.querySelector('#al-events').textContent = pending ? `${pending} awaiting response` : `${feed.state.events.length} event${feed.state.events.length === 1 ? '' : 's'} this run`;
@@ -85,7 +86,7 @@ export const alertsPage = {
     let page = 0;
     let side = 'issues';
     const PER_PAGE = 6;
-    body.innerHTML = `
+    setHTML(body, `
       <div class="alerts-page">
         <section class="panel alerts-page__trends">
           <header class="panel__head"><div class="tabs tabs--small" role="tablist" id="ap-metrics">${Object.entries(TRENDS).map(([k, t]) =>
@@ -103,7 +104,7 @@ export const alertsPage = {
           <footer class="pager" id="ap-pager"><button type="button" class="btn btn--small" data-page="-1">‹ Newer</button>
             <span class="mono small" id="ap-page"></span><button type="button" class="btn btn--small" data-page="1">Older ›</button></footer>
         </section>
-      </div>`;
+      </div>`);
     body.addEventListener('click', (e) => {
       const t = e.target.closest('[data-metric],[data-who],[data-page],[data-ack],[data-side]');
       if (!t) return;
@@ -125,7 +126,7 @@ export const alertsPage = {
       const hist = feed.state.history;
       const def = TRENDS[metric];
       body.querySelectorAll('[data-metric]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.metric === metric)));
-      body.querySelector('#ap-who').innerHTML = def.crew ? f.astronauts.map((a) => `<button type="button" data-who="${a.id}" aria-pressed="${a.id === s.astronaut}">${a.name.slice(-3)}</button>`).join('') : '';
+      setHTML(body.querySelector('#ap-who'), def.crew ? f.astronauts.map((a) => `<button type="button" data-who="${a.id}" aria-pressed="${a.id === s.astronaut}">${a.name.slice(-3)}</button>`).join('') : '');
       const xl = (t) => clockOf(hist.find((h) => h.t === t)?.at);
       const pts = (fn) => hist.map((h) => ({ x: h.t, y: fn(h) ?? null, gap: h.gap }));
       const a = f.astronauts.find((x) => x.id === s.astronaut);
@@ -134,16 +135,17 @@ export const alertsPage = {
         points: pts((h) => (def.crew ? h.crew[a.id]?.[key] : h.cabin[key])) }));
       const now = def.crew ? (metric === 'bp' ? `${a.blood_pressure.systolic_mmhg}/${a.blood_pressure.diastolic_mmhg} mmHg` : fmt(a.comparisons[metric]?.value ?? a[metric], metric))
         : fmt(f.cabin[metric], metric);
-      body.querySelector('#ap-main').innerHTML = `<figure class="mini-chart mini-chart--large">
-        <figcaption><span>${def.crew ? a.name : 'Shared cabin'} · ${def.label}</span><strong class="mono">${now}</strong></figcaption>
+      setHTML(body.querySelector('#ap-main'), `<figure class="mini-chart mini-chart--large">
+        <figcaption><span>${def.crew ? a.name : 'Shared cabin'} · ${def.label}</span><strong class="mono" data-value="main"></strong></figcaption>
         <div class="chart-slot" data-chart="main"></div>
-        <span class="muted small">${def.legend} · gaps = disconnected, not interpolated</span></figure>`;
+        <span class="muted small">${def.legend} · gaps = disconnected, not interpolated</span></figure>`);
+      setText(body.querySelector('[data-value="main"]'), now);
       const firstKey = def.lines(a.id)[0][0];
-      body.querySelector('#ap-crew').innerHTML = def.crew ? `<figure class="mini-chart">
+      setHTML(body.querySelector('#ap-crew'), def.crew ? `<figure class="mini-chart">
         <figcaption><span>Crew comparison · ${def.label}${metric === 'bp' ? ' (systolic)' : ''}</span>
           <span class="series-key">${f.astronauts.map((x, i) => `<i style="background:${SERIES[i]}"></i>${x.name.slice(-3)}`).join(' ')}</span></figcaption>
         <div class="chart-slot" data-chart="crew"></div></figure>`
-        : `<p class="muted small">Cabin readings are shared by all crew and are never summed into a crew score.</p>`;
+        : `<p class="muted small">Cabin readings are shared by all crew and are never summed into a crew score.</p>`);
       drawCharts(body, {
         main: { series, threshold, label: `${def.label} trend`, xLabel: xl },
         crew: { series: f.astronauts.map((x, i) => ({ name: x.name, key: LINE_META[firstKey][1], color: SERIES[i], points: pts((h) => h.crew[x.id]?.[firstKey]) })), label: `${def.label} across crew`, xLabel: xl },
@@ -155,7 +157,7 @@ export const alertsPage = {
       body.querySelector('#ap-issues').hidden = side !== 'issues';
       body.querySelector('#ap-events').hidden = side !== 'timeline';
       body.querySelector('#ap-pager').hidden = side !== 'timeline';
-      body.querySelector('#ap-issues').innerHTML = issues.length ? issues.slice(0, 6).map((x) => {
+      setHTML(body.querySelector('#ap-issues'), issues.length ? issues.slice(0, 6).map((x) => {
         const pr = responseProgress(ctx, x);
         const lead = x.evidence.find((v) => v.breached) || x.evidence[0];
         return `<li class="issue issue--${x.level}">
@@ -165,7 +167,7 @@ export const alertsPage = {
           <span class="issue__progress mono small">${pr.acked ? '✓ acknowledged' : `${pr.done}/${pr.total} steps`}</span>
           <button type="button" class="btn btn--small${x.level === 'alert' && !pr.acked ? ' btn--primary' : ''}" data-issue="${x.id}">Response steps</button></li>`;
       }).join('') + (issues.length > 6 ? `<li class="muted small">+${issues.length - 6} more</li>` : '')
-        : '<li class="state state--ok"><strong>All clear</strong><span>No alerts or watch items. Trigger a scenario from Simulate to see the response steps.</span></li>';
+        : '<li class="state state--ok"><strong>All clear</strong><span>No alerts or watch items. Trigger a scenario from Simulate to see the response steps.</span></li>');
 
       const events = feed.state.events;
       const pages = Math.max(1, Math.ceil(events.length / PER_PAGE));
@@ -175,7 +177,7 @@ export const alertsPage = {
       body.querySelector('[data-page="1"]').disabled = page >= pages - 1;
       const list = body.querySelector('#ap-events');
       if (list.contains(document.activeElement) && document.activeElement.matches('input')) return; // keep a note being typed
-      list.innerHTML = events.length ? events.slice(page * PER_PAGE, (page + 1) * PER_PAGE).map((e) => {
+      setHTML(list, events.length ? events.slice(page * PER_PAGE, (page + 1) * PER_PAGE).map((e) => {
         const ack = s.acks[e.key];
         return `<li class="event event--${e.type}">
           <span class="mono small">${clockOf(e.at)}</span>
@@ -189,7 +191,7 @@ export const alertsPage = {
               : `<span class="ack-form"><input type="text" data-note="${e.key}" placeholder="Optional note" aria-label="Acknowledgement note" maxlength="140">
                <button type="button" class="btn btn--small" data-ack="${e.key}">Acknowledge</button></span>`) : ''}
         </li>`;
-      }).join('') : '<li class="muted">No alert events this run. Trigger a scenario from the top bar to see detection and recovery.</li>';
+      }).join('') : '<li class="muted">No alert events this run. Trigger a scenario from the top bar to see detection and recovery.</li>');
     }
     return { render };
   },

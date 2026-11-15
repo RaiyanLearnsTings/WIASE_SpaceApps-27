@@ -6,8 +6,9 @@ import { alertStory, signalSeries, STAGES } from '../detection.mjs';
 import { drawCharts } from '../charts.mjs';
 import { METRICS, fmt, clockOf, durationLabel, escapeHtml } from '../format.mjs';
 import { openDialog } from './dialog.mjs';
+import { setHTML } from '../dom.mjs';
 
-const STAGE_TITLE = ['Personal baseline', 'Past threshold — not yet an alert', 'Alert confirmed', 'Recovery'];
+const STAGE_TITLE = ['Personal baseline', 'Past threshold, not yet an alert', 'Alert confirmed', 'Recovery'];
 const label = (k) => METRICS[k]?.label || k;
 
 export function openStory(ctx, alertId, { stage: startStage = 0 } = {}) {
@@ -15,7 +16,7 @@ export function openStory(ctx, alertId, { stage: startStage = 0 } = {}) {
   let stage = startStage;
   const body = document.createElement('div');
   body.className = 'story';
-  body.innerHTML = `
+  setHTML(body, `
     <div class="story__side">
       <ol class="story__list" id="st-list">${STAGE_TITLE.map((t, i) => `<li><button type="button" data-goto="${i}">
         <span class="mono">${i + 1}</span>${t}</button></li>`).join('')}</ol>
@@ -24,7 +25,7 @@ export function openStory(ctx, alertId, { stage: startStage = 0 } = {}) {
         <button type="button" class="btn btn--small" data-move="-1">‹ Back</button><span class="spacer"></span>
         <button type="button" class="btn btn--small btn--primary" data-move="1" id="st-next">Next ›</button></div>
     </div>
-    <div class="story__charts" id="st-charts"></div>`;
+    <div class="story__charts" id="st-charts"></div>`);
 
   const atOf = (t) => feed.state.history.find((h) => h.t === t)?.at;
   // Axis labels can fall between frames: offset the simulated clock from the nearest stored frame.
@@ -107,7 +108,7 @@ export function openStory(ctx, alertId, { stage: startStage = 0 } = {}) {
   // Only touch the live text when it changes, so screen readers don't re-announce it every frame.
   const setText = (htmlText) => {
     const el = body.querySelector('#st-text');
-    if (el.dataset.html !== htmlText) { el.innerHTML = htmlText; el.dataset.html = htmlText; }
+    if (el.dataset.html !== htmlText) { setHTML(el, htmlText); el.dataset.html = htmlText; }
   };
 
   function draw() {
@@ -118,17 +119,17 @@ export function openStory(ctx, alertId, { stage: startStage = 0 } = {}) {
     body.querySelector('#st-next').textContent = stage === STAGES.length - 1 ? 'Done' : 'Next ›';
     if (!s) {
       setText('<p class="muted">This alert belongs to an earlier run, so its frames are no longer here.</p>');
-      charts.innerHTML = '';
+      setHTML(charts, '');
       return;
     }
     setText(`<h4>${stage + 1} · ${STAGE_TITLE[stage]}</h4>${text(s)}`);
     if (!s.inHistory) {
-      charts.innerHTML = `<p class="muted">This alert is older than the trend history kept in this browser, so its frames can't be drawn. The steps on the left still describe the rule.</p>`;
+      setHTML(charts, `<p class="muted">This alert is older than the trend history kept in this browser, so its frames can't be drawn. The steps on the left still describe the rule.</p>`);
       return;
     }
-    charts.innerHTML = s.signals.map((k) => `<figure class="mini-chart">
+    setHTML(charts, s.signals.map((k) => `<figure class="mini-chart">
       <figcaption><span>${label(k)}</span><span class="muted small">${s.target === 'cabin' ? 'Cabin' : escapeHtml(who(s))}</span></figcaption>
-      <div class="chart-slot" data-chart="${k}"></div></figure>`).join('');
+      <div class="chart-slot" data-chart="${k}"></div></figure>`).join(''));
     drawCharts(charts, Object.fromEntries(s.signals.map((k) => [k, specFor(s, k)])));
   }
 

@@ -5,6 +5,7 @@
 import { PROTOCOLS, collectIssues } from '../issues.mjs';
 import { METRICS, fmt, statusPill, clockOf, escapeHtml } from '../format.mjs';
 import { openDialog, toast } from './dialog.mjs';
+import { setHTML } from '../dom.mjs';
 
 const label = (k) => METRICS[k]?.label || k;
 
@@ -30,7 +31,7 @@ export function openResponse(ctx, issueId) {
     if (document.activeElement?.id === 'resp-note' && body.contains(document.activeElement)) return; // don't wipe a note being typed
     const live = feed.connection === 'live';
     const issue = collectIssues(feed.state.frame, { live }).find((i) => i.id === issueId) || (last && { ...last, resolved: true });
-    if (!issue) { body.innerHTML = '<p class="muted">This issue is no longer active.</p>'; return; }
+    if (!issue) { setHTML(body, '<p class="muted">This issue is no longer active.</p>'); return; }
     last = issue;
     const p = PROTOCOLS[issue.protocol];
     const r = store.get().responses[issue.id] || { done: [] };
@@ -39,7 +40,7 @@ export function openResponse(ctx, issueId) {
     const note = body.querySelector('#resp-note')?.value ?? r.note ?? '';
     const alertId = issue.level === 'alert'
       ? feed.state.frame?.active_alerts?.find((a) => a.rule === issue.protocol && a.target === issue.target)?.alert_id : null;
-    body.innerHTML = `
+    const html = `
       <div class="respond__grid">
         <section class="respond__info">
           <div class="respond__status">${issue.resolved ? statusPill('normal', 'Back in range') : statusPill(issue.level)}
@@ -69,6 +70,8 @@ export function openResponse(ctx, issueId) {
           <p class="footnote">Non-diagnostic; follow mission procedures. Acknowledging never clears an alert.</p>
         </section>
       </div>`;
+    // Unchanged since the last frame: leave the DOM (and any hover/selection) alone.
+    if (!setHTML(body, html)) return;
     if (focusSel) body.querySelector(focusSel)?.focus({ preventScroll: true });
   };
 

@@ -139,12 +139,20 @@ const isSource = (slot) => cursor.source === slotId(slot);
  */
 export function drawCharts(root, specs) {
   wire();
-  for (const slot of root.querySelectorAll('[data-chart]')) {
-    const spec = specs[slot.dataset.chart];
-    if (!spec) continue;
+  // Read every slot's size first, then write: alternating reads and writes would force the browser to
+  // recompute layout once per chart.
+  const slots = [...root.querySelectorAll('[data-chart]')]
+    .map((slot) => ({ slot, spec: specs[slot.dataset.chart] }))
+    .filter((x) => x.spec)
+    .map((x) => ({ ...x, width: x.slot.clientWidth || 480, height: x.slot.clientHeight || x.spec.height || 120 }));
+  for (const { slot, spec, width, height } of slots) {
     const { series, ...opts } = spec;
-    const sized = { ...opts, width: slot.clientWidth || 480, height: slot.clientHeight || opts.height || 120 };
-    slot.innerHTML = lineChart(series, sized);
+    const sized = { ...opts, width, height };
+    const svg = lineChart(series, sized);
+    // Same picture as last time (no new sample, same size): keep the existing SVG and its cursor.
+    if (slot.__svg === svg && slot._chart !== undefined) continue;
+    slot.innerHTML = svg;
+    slot.__svg = svg;
     const g = chartGeometry(series, sized);
     slot._chart = g ? { series, opts: sized, g, xs: sampleTimes(series, g) } : null;
     if (g && slot._chart.xs.length) {

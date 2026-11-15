@@ -35,10 +35,10 @@ function overview() {
     <section class="panel"><header class="panel__head"><h3>The problem</h3></header>
       <p>On the way to Mars a message to Earth takes <strong>3–22 minutes one way</strong>. A crew of three cannot wait for a
         flight surgeon to notice a trend. They need on-board decision support that knows what is normal <em>for each person</em>,
-        tells them early when something changes, and explains why — without pretending to diagnose.</p>
+        tells them early when something changes, and explains why, without claiming to diagnose.</p>
       <p>WIASE watches each astronaut’s heart rate, blood pressure, SpO₂, sleep and cognition, plus the shared cabin air,
         against personal baselines calibrated from real data, including <strong>NASA ISS cabin and radiation records</strong>.</p>
-      <p class="muted small">Synthetic demonstration — not flight software, medical advice or a validated device.</p>
+      <p class="muted small">Synthetic demonstration. Not flight software, medical advice or a validated device.</p>
     </section>
     <section class="panel"><header class="panel__head"><h3>How detection works</h3></header>
       <ol class="pipeline">${STEPS.map(([t, d], i) => `<li><span class="pipeline__n">${i + 1}</span><div><strong>${t}</strong><span class="muted small">${d}</span></div></li>`).join('')}</ol>
@@ -47,7 +47,7 @@ function overview() {
       <ul class="plain">
         <li><strong>Crew</strong>: a 45-second reaction test mixing three random mini-games (Tap, Go/No-Go, Left/Right) and a six-question daily check-in; their own trends without a stigmatising score.</li>
         <li><strong>Crew medical officer</strong>: who needs attention, what changed, is the cabin also changing, what to check next.</li>
-        <li><strong>Ground</strong>: review packets that arrive after the real communication delay — the crew is not blocked waiting for them.</li>
+        <li><strong>Ground</strong>: review packets that arrive after the communication delay; the crew does not wait for them.</li>
       </ul>
     </section>
   </div>`;
@@ -79,13 +79,13 @@ function validation(v) {
         ${Object.entries(v.scenarios).map(([k, r]) => `<tr><th scope="row">${LABEL[k]}</th><td class="mono">${r.detected}/${r.injections}</td>
           <td class="mono">${s(r.median_time_to_alert_s)}</td><td class="mono">${s(r.median_time_to_clear_s)}</td></tr>`).join('')}
       </tbody></table></section>
-    <section class="panel"><header class="panel__head"><h3>Sensitivity — smallest change caught</h3></header>
+    <section class="panel"><header class="panel__head"><h3>Sensitivity: smallest change caught</h3></header>
       <table class="data-table"><thead><tr><th>Scenario</th>${(v.sensitivity.high_resting_hr || []).map((r) => `<th>${Math.round(r.intensity * 100)}%</th>`).join('')}</tr></thead><tbody>
         ${Object.entries(v.sensitivity).map(([k, rows]) => `<tr><th scope="row">${LABEL[k]}</th>${rows.map((r) =>
           `<td class="mono ${r.detected === r.injections ? 'ok' : r.detected ? 'part' : 'miss'}">+${r.change}<small> ${UNIT[k]}</small><br>${r.detected}/${r.injections}</td>`).join('')}</tr>`).join('')}
       </tbody></table>
       <p class="muted small">A sustained heart-rate rise is caught reliably at +28 bpm (missed at +14), CO₂ at +340 ppm (half the time at +200). The cognitive rule needs the full
-        change because it requires 2 of 3 signals over wide personal spreads — a known limitation we would tune with real crew data.</p>
+        change because it requires 2 of 3 signals over wide personal spreads. We would tune it with real crew data.</p>
     </section>
     <p class="footnote about-note">${escapeHtml(v.method.note)} The simulator’s noise is cleaner than real wearables, so real false-alarm
       rates are unknown. Reproduce: <code>python3 tools/evaluate.py</code> → docs/VALIDATION.md.</p>
