@@ -180,7 +180,7 @@ select:disabled { opacity: .4; cursor: not-allowed; }
 
 /* Narrower laptops/projectors: keep the top bar on one row without overflow (status stays icon +
    colour on screen; the connection label and delay remain in the accessible name / tooltip). */
-@media (max-width: 1240px) {
+@media (max-width: 1320px) {
   .topbar { gap: 10px; padding-left: 14px; padding-right: 14px; }
   .topbar #delay { display: none; }
   .topbar .conn__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
