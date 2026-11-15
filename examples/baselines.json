@@ -1,0 +1,419 @@
+{
+  "synthetic": true,
+  "method": {
+    "trigger_z": 3,
+    "recovery_fraction": 0.7,
+    "confirmation_sim_seconds": 12,
+    "recovery_sim_seconds": 8,
+    "cognitive_interval_sim_seconds": 15,
+    "minimum_deltas": {
+      "heart_rate_bpm": 15,
+      "spo2_pct": 3,
+      "systolic_mmhg": 20,
+      "diastolic_mmhg": 12,
+      "sleep_duration_min": 45,
+      "median_reaction_time_ms": 45,
+      "lapses": 3,
+      "state_anxiety_score": 9,
+      "co2_ppm": 300,
+      "temperature_c": 1.2,
+      "relative_humidity_pct": 8
+    }
+  },
+  "astronauts": [
+    {
+      "id": "astro-1",
+      "name": "Astronaut 001",
+      "sleep_source": {
+        "participant": "Bidslab01",
+        "template_night": 1
+      },
+      "baseline": {
+        "heart_rate_bpm": {
+          "center": 70.62,
+          "spread": 5.93,
+          "sample_count": 22
+        },
+        "spo2_pct": {
+          "center": 96.5,
+          "spread": 0.74,
+          "sample_count": 22
+        },
+        "systolic_mmhg": {
+          "center": 106.5,
+          "spread": 10.38,
+          "sample_count": 22
+        },
+        "diastolic_mmhg": {
+          "center": 71.5,
+          "spread": 7.78,
+          "sample_count": 22
+        },
+        "median_reaction_time_ms": {
+          "center": 292.75,
+          "spread": 36.32,
+          "sample_count": 31
+        },
+        "lapses": {
+          "center": 0,
+          "spread": 2.97,
+          "sample_count": 31
+        },
+        "state_anxiety_score": {
+          "center": 27.0,
+          "spread": 8.15,
+          "sample_count": 66
+        },
+        "sleep_duration_min": {
+          "center": 407.5,
+          "spread": 20,
+          "sample_count": 2
+        },
+        "sleep_hr_by_stage": {
+          "Wake": {
+            "center": 58.83,
+            "spread": 8.65,
+            "sample_count": 109
+          },
+          "N1": {
+            "center": 56.67,
+            "spread": 5.19,
+            "sample_count": 99
+          },
+          "N2": {
+            "center": 53.57,
+            "spread": 3.57,
+            "sample_count": 836
+          },
+          "N3": {
+            "center": 60.33,
+            "spread": 4.05,
+            "sample_count": 442
+          },
+          "REM": {
+            "center": 55.67,
+            "spread": 4.45,
+            "sample_count": 253
+          }
+        }
+      },
+      "schedule": {
+        "bedtime_minute": 1380,
+        "exercise_minute": 720,
+        "work_blocks_minute": [
+          [
+            495,
+            705
+          ],
+          [
+            810,
+            1035
+          ]
+        ]
+      }
+    },
+    {
+      "id": "astro-2",
+      "name": "Astronaut 002",
+      "sleep_source": {
+        "participant": "Bidslab00",
+        "template_night": 1
+      },
+      "baseline": {
+        "heart_rate_bpm": {
+          "center": 75.25,
+          "spread": 5.93,
+          "sample_count": 22
+        },
+        "spo2_pct": {
+          "center": 97.0,
+          "spread": 0.74,
+          "sample_count": 22
+        },
+        "systolic_mmhg": {
+          "center": 116.5,
+          "spread": 10.38,
+          "sample_count": 22
+        },
+        "diastolic_mmhg": {
+          "center": 76.75,
+          "spread": 7.78,
+          "sample_count": 22
+        },
+        "median_reaction_time_ms": {
+          "center": 325.5,
+          "spread": 36.32,
+          "sample_count": 31
+        },
+        "lapses": {
+          "center": 2,
+          "spread": 2.97,
+          "sample_count": 31
+        },
+        "state_anxiety_score": {
+          "center": 33.0,
+          "spread": 8.15,
+          "sample_count": 66
+        },
+        "sleep_duration_min": {
+          "center": 449.5,
+          "spread": 20,
+          "sample_count": 3
+        },
+        "sleep_hr_by_stage": {
+          "Wake": {
+            "center": 67.0,
+            "spread": 9.64,
+            "sample_count": 122
+          },
+          "N1": {
+            "center": 58.25,
+            "spread": 4.32,
+            "sample_count": 143
+          },
+          "N2": {
+            "center": 57.4,
+            "spread": 3.11,
+            "sample_count": 1226
+          },
+          "N3": {
+            "center": 57.67,
+            "spread": 3.53,
+            "sample_count": 705
+          },
+          "REM": {
+            "center": 60.25,
+            "spread": 2.9,
+            "sample_count": 672
+          }
+        }
+      },
+      "schedule": {
+        "bedtime_minute": 1390,
+        "exercise_minute": 755,
+        "work_blocks_minute": [
+          [
+            495,
+            705
+          ],
+          [
+            810,
+            1035
+          ]
+        ]
+      }
+    },
+    {
+      "id": "astro-3",
+      "name": "Astronaut 003",
+      "sleep_source": {
+        "participant": "Bidslab02",
+        "template_night": 1
+      },
+      "baseline": {
+        "heart_rate_bpm": {
+          "center": 77.88,
+          "spread": 5.93,
+          "sample_count": 22
+        },
+        "spo2_pct": {
+          "center": 97.5,
+          "spread": 0.74,
+          "sample_count": 22
+        },
+        "systolic_mmhg": {
+          "center": 121.38,
+          "spread": 10.38,
+          "sample_count": 22
+        },
+        "diastolic_mmhg": {
+          "center": 81.0,
+          "spread": 7.78,
+          "sample_count": 22
+        },
+        "median_reaction_time_ms": {
+          "center": 349.0,
+          "spread": 36.32,
+          "sample_count": 31
+        },
+        "lapses": {
+          "center": 4,
+          "spread": 2.97,
+          "sample_count": 31
+        },
+        "state_anxiety_score": {
+          "center": 37.75,
+          "spread": 8.15,
+          "sample_count": 66
+        },
+        "sleep_duration_min": {
+          "center": 409.0,
+          "spread": 20,
+          "sample_count": 1
+        },
+        "sleep_hr_by_stage": {
+          "Wake": {
+            "center": 74.0,
+            "spread": 2.97,
+            "sample_count": 193
+          },
+          "N1": {
+            "center": 66.0,
+            "spread": 2.72,
+            "sample_count": 30
+          },
+          "N2": {
+            "center": 65.83,
+            "spread": 2.5,
+            "sample_count": 286
+          },
+          "N3": {
+            "center": 68.17,
+            "spread": 2.5,
+            "sample_count": 200
+          },
+          "REM": {
+            "center": 66.0,
+            "spread": 3.83,
+            "sample_count": 160
+          }
+        }
+      },
+      "schedule": {
+        "bedtime_minute": 1400,
+        "exercise_minute": 790,
+        "work_blocks_minute": [
+          [
+            495,
+            705
+          ],
+          [
+            810,
+            1035
+          ]
+        ]
+      }
+    }
+  ],
+  "cabin": {
+    "mission": "RR-6",
+    "baseline": {
+      "co2_ppm": {
+        "center": 2484.0,
+        "spread": 48.93,
+        "sample_count": 288
+      },
+      "temperature_c": {
+        "center": 22.6,
+        "spread": 0.25,
+        "sample_count": 288
+      },
+      "relative_humidity_pct": {
+        "center": 41.0,
+        "spread": 1,
+        "sample_count": 288
+      },
+      "noise_dba": {
+        "center": 58.0,
+        "spread": 1.5,
+        "sample_count": 0
+      }
+    }
+  },
+  "provenance": {
+    "heart_rate_bpm": {
+      "source": "workbook",
+      "sheets": [
+        "PPG activities",
+        "Sleep epochs"
+      ],
+      "note": "Seated cuff HR (awake) and BIDSleep stage HR (asleep); dynamics synthetic."
+    },
+    "spo2_pct": {
+      "source": "workbook",
+      "sheets": [
+        "PPG activities"
+      ],
+      "note": "Seated oximeter SpO2; dynamics synthetic."
+    },
+    "blood_pressure": {
+      "source": "workbook",
+      "sheets": [
+        "PPG activities"
+      ],
+      "note": "Seated cuff systolic/diastolic; activity and sleep offsets are synthetic."
+    },
+    "sleep": {
+      "source": "workbook",
+      "sheets": [
+        "Sleep nights",
+        "Sleep epochs"
+      ],
+      "note": "BIDSleep template night per person."
+    },
+    "median_reaction_time_ms": {
+      "source": "workbook",
+      "sheets": [
+        "Sleep deprivation"
+      ],
+      "note": "OpenNeuro ds004902 normal-sleep PVT."
+    },
+    "lapses": {
+      "source": "workbook",
+      "sheets": [
+        "Sleep deprivation"
+      ],
+      "note": "OpenNeuro ds004902 normal-sleep PVT."
+    },
+    "state_anxiety_score": {
+      "source": "workbook",
+      "sheets": [
+        "QoL stress"
+      ],
+      "note": "QoL_Stress relaxed-phase STAI-S."
+    },
+    "co2_ppm": {
+      "source": "workbook",
+      "sheets": [
+        "Cabin environment"
+      ],
+      "note": "NASA EDA RR-6 ISS cabin daily profile."
+    },
+    "temperature_c": {
+      "source": "workbook",
+      "sheets": [
+        "Cabin environment"
+      ],
+      "note": "NASA EDA RR-6 ISS cabin daily profile."
+    },
+    "relative_humidity_pct": {
+      "source": "workbook",
+      "sheets": [
+        "Cabin environment"
+      ],
+      "note": "NASA EDA RR-6 ISS cabin daily profile."
+    },
+    "radiation": {
+      "source": "workbook",
+      "sheets": [
+        "Radiation"
+      ],
+      "note": "NASA RadLab DosTel1 5-min medians; cumulative absorbed dose is the rate integrated over simulated time since run start. Dose equivalent absent and not estimated."
+    },
+    "noise_dba": {
+      "source": "synthetic",
+      "sheets": [],
+      "note": "No noise data supplied; demo assumption only."
+    },
+    "sensors": {
+      "source": "synthetic",
+      "sheets": [],
+      "note": "Zone sensors are deterministic offsets of the measured cabin profile; scenario effects are concentrated in one zone. Alerts are evaluated on the cabin-wide reading only."
+    },
+    "o2_and_pressure": {
+      "source": "assumed",
+      "sheets": [],
+      "note": "Fixed 21% O2 / 101.3 kPa reference; not measured."
+    }
+  }
+}

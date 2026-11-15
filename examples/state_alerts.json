@@ -1,0 +1,607 @@
+{
+  "feed_id": "86d12fb0456f4c7a8ede7175c8512850",
+  "schema_version": 1,
+  "synthetic": true,
+  "run_id": "677cbb40cf044ccd8386350431f591aa",
+  "sequence": 2,
+  "clock": {
+    "simulated_at": "2030-01-01T08:02:00Z",
+    "elapsed_seconds": 120,
+    "speed": 1,
+    "published_at": "2026-11-14T21:19:35Z"
+  },
+  "astronauts": [
+    {
+      "id": "astro-1",
+      "name": "Astronaut 001",
+      "activity": "resting",
+      "heart_rate_bpm": 73.1,
+      "spo2_pct": 96.4,
+      "blood_pressure": {
+        "systolic_mmhg": 107,
+        "diastolic_mmhg": 72
+      },
+      "sleep": {
+        "stage": null,
+        "sleep_so_far_min": null,
+        "last_sleep_duration_min": 401.0,
+        "last_sleep_efficiency_pct": 93.3
+      },
+      "cognition": {
+        "sampled_at": "2030-01-01T08:02:00Z",
+        "median_reaction_time_ms": 283,
+        "lapses": 0,
+        "state_anxiety_score": 29
+      },
+      "comparisons": {
+        "heart_rate_bpm": {
+          "value": 73.1,
+          "expected": 70.62,
+          "spread": 5.93,
+          "delta": 2.48,
+          "robust_z": 0.42,
+          "threshold": 88.41,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "spo2_pct": {
+          "value": 96.4,
+          "expected": 96.5,
+          "spread": 0.74,
+          "delta": -0.1,
+          "robust_z": -0.14,
+          "threshold": 93.5,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "systolic_mmhg": {
+          "value": 107,
+          "expected": 106.5,
+          "spread": 10.38,
+          "delta": 0.5,
+          "robust_z": 0.05,
+          "threshold": 137.64,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "diastolic_mmhg": {
+          "value": 72,
+          "expected": 71.5,
+          "spread": 7.78,
+          "delta": 0.5,
+          "robust_z": 0.06,
+          "threshold": 94.84,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "last_sleep_duration_min": {
+          "value": 401.0,
+          "expected": 407.5,
+          "spread": 20,
+          "delta": -6.5,
+          "robust_z": -0.33,
+          "threshold": 347.5,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "median_reaction_time_ms": {
+          "value": 283,
+          "expected": 292.75,
+          "spread": 36.32,
+          "delta": -9.75,
+          "robust_z": -0.27,
+          "threshold": 401.71,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "lapses": {
+          "value": 0,
+          "expected": 0,
+          "spread": 2.97,
+          "delta": 0,
+          "robust_z": 0.0,
+          "threshold": 8.91,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "state_anxiety_score": {
+          "value": 29,
+          "expected": 27.0,
+          "spread": 8.15,
+          "delta": 2.0,
+          "robust_z": 0.25,
+          "threshold": 51.45,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        }
+      },
+      "alert_status": "normal"
+    },
+    {
+      "id": "astro-2",
+      "name": "Astronaut 002",
+      "activity": "resting",
+      "heart_rate_bpm": 130.3,
+      "spo2_pct": 97.1,
+      "blood_pressure": {
+        "systolic_mmhg": 117,
+        "diastolic_mmhg": 75
+      },
+      "sleep": {
+        "stage": null,
+        "sleep_so_far_min": null,
+        "last_sleep_duration_min": 449.5,
+        "last_sleep_efficiency_pct": 96.1
+      },
+      "cognition": {
+        "sampled_at": "2030-01-01T08:02:00Z",
+        "median_reaction_time_ms": 326,
+        "lapses": 2,
+        "state_anxiety_score": 34
+      },
+      "comparisons": {
+        "heart_rate_bpm": {
+          "value": 130.3,
+          "expected": 75.25,
+          "spread": 5.93,
+          "delta": 55.05,
+          "robust_z": 9.28,
+          "threshold": 93.04,
+          "direction": "high",
+          "threshold_breached": true,
+          "in_recovery_band": false
+        },
+        "spo2_pct": {
+          "value": 97.1,
+          "expected": 97.0,
+          "spread": 0.74,
+          "delta": 0.1,
+          "robust_z": 0.14,
+          "threshold": 94.0,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "systolic_mmhg": {
+          "value": 117,
+          "expected": 116.5,
+          "spread": 10.38,
+          "delta": 0.5,
+          "robust_z": 0.05,
+          "threshold": 147.64,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "diastolic_mmhg": {
+          "value": 75,
+          "expected": 76.75,
+          "spread": 7.78,
+          "delta": -1.75,
+          "robust_z": -0.22,
+          "threshold": 100.09,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "last_sleep_duration_min": {
+          "value": 449.5,
+          "expected": 449.5,
+          "spread": 20,
+          "delta": 0.0,
+          "robust_z": 0.0,
+          "threshold": 389.5,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "median_reaction_time_ms": {
+          "value": 326,
+          "expected": 325.5,
+          "spread": 36.32,
+          "delta": 0.5,
+          "robust_z": 0.01,
+          "threshold": 434.46,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "lapses": {
+          "value": 2,
+          "expected": 2,
+          "spread": 2.97,
+          "delta": 0,
+          "robust_z": 0.0,
+          "threshold": 10.91,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "state_anxiety_score": {
+          "value": 34,
+          "expected": 33.0,
+          "spread": 8.15,
+          "delta": 1.0,
+          "robust_z": 0.12,
+          "threshold": 57.45,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        }
+      },
+      "alert_status": "alert"
+    },
+    {
+      "id": "astro-3",
+      "name": "Astronaut 003",
+      "activity": "resting",
+      "heart_rate_bpm": 76.8,
+      "spo2_pct": 97.0,
+      "blood_pressure": {
+        "systolic_mmhg": 120,
+        "diastolic_mmhg": 79
+      },
+      "sleep": {
+        "stage": null,
+        "sleep_so_far_min": null,
+        "last_sleep_duration_min": 409.0,
+        "last_sleep_efficiency_pct": 80.4
+      },
+      "cognition": {
+        "sampled_at": "2030-01-01T08:02:00Z",
+        "median_reaction_time_ms": 351,
+        "lapses": 5,
+        "state_anxiety_score": 36
+      },
+      "comparisons": {
+        "heart_rate_bpm": {
+          "value": 76.8,
+          "expected": 77.88,
+          "spread": 5.93,
+          "delta": -1.08,
+          "robust_z": -0.18,
+          "threshold": 95.67,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "spo2_pct": {
+          "value": 97.0,
+          "expected": 97.5,
+          "spread": 0.74,
+          "delta": -0.5,
+          "robust_z": -0.68,
+          "threshold": 94.5,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "systolic_mmhg": {
+          "value": 120,
+          "expected": 121.38,
+          "spread": 10.38,
+          "delta": -1.38,
+          "robust_z": -0.13,
+          "threshold": 152.52,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "diastolic_mmhg": {
+          "value": 79,
+          "expected": 81.0,
+          "spread": 7.78,
+          "delta": -2.0,
+          "robust_z": -0.26,
+          "threshold": 104.34,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "last_sleep_duration_min": {
+          "value": 409.0,
+          "expected": 409.0,
+          "spread": 20,
+          "delta": 0.0,
+          "robust_z": 0.0,
+          "threshold": 349.0,
+          "direction": "low",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "median_reaction_time_ms": {
+          "value": 351,
+          "expected": 349.0,
+          "spread": 36.32,
+          "delta": 2.0,
+          "robust_z": 0.06,
+          "threshold": 457.96,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "lapses": {
+          "value": 5,
+          "expected": 4,
+          "spread": 2.97,
+          "delta": 1,
+          "robust_z": 0.34,
+          "threshold": 12.91,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        },
+        "state_anxiety_score": {
+          "value": 36,
+          "expected": 37.75,
+          "spread": 8.15,
+          "delta": -1.75,
+          "robust_z": -0.21,
+          "threshold": 62.2,
+          "direction": "high",
+          "threshold_breached": false,
+          "in_recovery_band": true
+        }
+      },
+      "alert_status": "normal"
+    }
+  ],
+  "cabin": {
+    "id": "cabin",
+    "co2_ppm": 3530,
+    "temperature_c": 22.67,
+    "relative_humidity_pct": 41.2,
+    "noise_dba": 56.0,
+    "synthetic_fields": [
+      "noise_dba",
+      "sensors"
+    ],
+    "radiation": {
+      "instrument": "DosTel1",
+      "absorbed_dose_rate_ugy_h": 6.771247,
+      "dose_equivalent_rate_usv_h": null,
+      "particle_flux_per_cm2_sr_s": 0.3436758,
+      "cumulative_absorbed_dose_ugy": 0.226,
+      "cumulative_since_elapsed_seconds": 0
+    },
+    "comparisons": {
+      "co2_ppm": {
+        "value": 3530,
+        "expected": 2484.0,
+        "spread": 48.93,
+        "delta": 1046.0,
+        "robust_z": 21.38,
+        "threshold": 2784.0,
+        "direction": "high",
+        "threshold_breached": true,
+        "in_recovery_band": false
+      },
+      "temperature_c": {
+        "value": 22.67,
+        "expected": 22.6,
+        "spread": 0.25,
+        "delta": 0.07,
+        "robust_z": 0.28,
+        "threshold": 23.8,
+        "direction": "high",
+        "threshold_breached": false,
+        "in_recovery_band": true
+      },
+      "relative_humidity_pct": {
+        "value": 41.2,
+        "expected": 41.0,
+        "spread": 1,
+        "delta": 0.2,
+        "robust_z": 0.2,
+        "threshold": 49.0,
+        "direction": "high",
+        "threshold_breached": false,
+        "in_recovery_band": true
+      },
+      "noise_dba": {
+        "value": 56.0,
+        "expected": 58.0,
+        "spread": 1.5,
+        "delta": -2.0,
+        "robust_z": -1.33,
+        "threshold": 64.0,
+        "direction": "high",
+        "threshold_breached": false,
+        "in_recovery_band": true
+      }
+    },
+    "sensors": [
+      {
+        "id": "rest-co2",
+        "zone": "rest",
+        "metric": "co2_ppm",
+        "x": 0.14,
+        "y": 0.2,
+        "value": 2812,
+        "expected": 2484.0,
+        "threshold": 2784.0,
+        "delta": 328.0,
+        "status": "watch"
+      },
+      {
+        "id": "rest-temp",
+        "zone": "rest",
+        "metric": "temperature_c",
+        "x": 0.26,
+        "y": 0.32,
+        "value": 22.76,
+        "expected": 22.6,
+        "threshold": 23.8,
+        "delta": 0.16,
+        "status": "normal"
+      },
+      {
+        "id": "work-co2",
+        "zone": "work",
+        "metric": "co2_ppm",
+        "x": 0.6,
+        "y": 0.18,
+        "value": 3865,
+        "expected": 2484.0,
+        "threshold": 2784.0,
+        "delta": 1381.0,
+        "status": "watch"
+      },
+      {
+        "id": "work-noise",
+        "zone": "work",
+        "metric": "noise_dba",
+        "x": 0.84,
+        "y": 0.3,
+        "value": 55.6,
+        "expected": 58.0,
+        "threshold": 64.0,
+        "delta": -2.4,
+        "status": "normal"
+      },
+      {
+        "id": "sys-temp",
+        "zone": "systems",
+        "metric": "temperature_c",
+        "x": 0.12,
+        "y": 0.62,
+        "value": 22.57,
+        "expected": 22.6,
+        "threshold": 23.8,
+        "delta": -0.03,
+        "status": "normal"
+      },
+      {
+        "id": "sys-rh",
+        "zone": "systems",
+        "metric": "relative_humidity_pct",
+        "x": 0.2,
+        "y": 0.84,
+        "value": 40.7,
+        "expected": 41.0,
+        "threshold": 49.0,
+        "delta": -0.3,
+        "status": "normal"
+      },
+      {
+        "id": "lab-co2",
+        "zone": "lab",
+        "metric": "co2_ppm",
+        "x": 0.56,
+        "y": 0.7,
+        "value": 3323,
+        "expected": 2484.0,
+        "threshold": 2784.0,
+        "delta": 839.0,
+        "status": "watch"
+      },
+      {
+        "id": "lab-temp",
+        "zone": "lab",
+        "metric": "temperature_c",
+        "x": 0.8,
+        "y": 0.82,
+        "value": 22.72,
+        "expected": 22.6,
+        "threshold": 23.8,
+        "delta": 0.12,
+        "status": "normal"
+      }
+    ],
+    "alert_status": "alert"
+  },
+  "active_scenarios": [
+    {
+      "id": "high_resting_hr",
+      "target": "astro-2",
+      "label": "Elevated resting heart rate",
+      "started_at_elapsed_seconds": 0,
+      "expires_at_elapsed_seconds": 900,
+      "remaining_seconds": 780
+    },
+    {
+      "id": "co2_buildup",
+      "target": "cabin",
+      "label": "Cabin CO₂ buildup",
+      "started_at_elapsed_seconds": 0,
+      "expires_at_elapsed_seconds": 900,
+      "remaining_seconds": 780
+    }
+  ],
+  "active_alerts": [
+    {
+      "alert_id": 1,
+      "target": "astro-2",
+      "rule": "heart_rate_high",
+      "label": "Heart rate above activity baseline",
+      "opened_at": "2030-01-01T08:00:15Z",
+      "opened_at_elapsed_seconds": 15,
+      "signals": {
+        "heart_rate_bpm": {
+          "value": 127.9,
+          "expected": 75.25,
+          "spread": 5.93,
+          "delta": 52.65,
+          "robust_z": 8.88,
+          "threshold": 93.04,
+          "direction": "high",
+          "threshold_breached": true,
+          "in_recovery_band": false
+        }
+      }
+    },
+    {
+      "alert_id": 2,
+      "target": "cabin",
+      "rule": "co2_high",
+      "label": "Cabin CO₂ above baseline",
+      "opened_at": "2030-01-01T08:00:21Z",
+      "opened_at_elapsed_seconds": 21,
+      "signals": {
+        "co2_ppm": {
+          "value": 3532,
+          "expected": 2484.0,
+          "spread": 48.93,
+          "delta": 1048.0,
+          "robust_z": 21.42,
+          "threshold": 2784.0,
+          "direction": "high",
+          "threshold_breached": true,
+          "in_recovery_band": false
+        }
+      }
+    }
+  ],
+  "alert_events": [
+    {
+      "event_id": 1,
+      "type": "opened",
+      "at": "2030-01-01T08:00:15Z",
+      "elapsed_seconds": 15,
+      "alert_id": 1,
+      "target": "astro-2",
+      "rule": "heart_rate_high",
+      "label": "Heart rate above activity baseline",
+      "reason": "threshold_exceeded"
+    },
+    {
+      "event_id": 2,
+      "type": "opened",
+      "at": "2030-01-01T08:00:21Z",
+      "elapsed_seconds": 21,
+      "alert_id": 2,
+      "target": "cabin",
+      "rule": "co2_high",
+      "label": "Cabin CO₂ above baseline",
+      "reason": "threshold_exceeded"
+    }
+  ]
+}

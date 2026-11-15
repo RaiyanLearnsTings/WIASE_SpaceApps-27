@@ -1,0 +1,418 @@
+{
+  "model": "astronaut.glb",
+  "units": "metres",
+  "up_axis": "+Y",
+  "forward_axis": "+Z (the body faces +Z; subject's left is +X)",
+  "total_triangles": 127094,
+  "attribution": "3D anatomy: Z-Anatomy - The libre 3D atlas of anatomy (CC BY-SA 4.0); BodyParts3D - The Database Center for Life Science (CC BY-SA 2.1 JP). Modified.",
+  "structures": [
+    {
+      "name": "skin",
+      "label": "Skin",
+      "system": "Integumentary",
+      "description": "Full adult body surface in a neutral pose, smoothed to a clinical-mannequin look.",
+      "source": "Z-Anatomy body-surface region patches, joined, voxel-remeshed and smoothed; hair, nails and external genitalia removed.",
+      "approximated": false,
+      "triangles": 35992,
+      "bbox_min": [
+        -0.35249,
+        -1e-05,
+        -0.15282
+      ],
+      "bbox_max": [
+        0.35249,
+        1.78001,
+        0.15282
+      ],
+      "center": [
+        0.0,
+        0.89,
+        0.0
+      ]
+    },
+    {
+      "name": "brain",
+      "label": "Brain (cerebral hemispheres)",
+      "system": "Nervous",
+      "description": "Left and right cerebral hemispheres.",
+      "source": "Z-Anatomy 'White matter of telencephalon' (left + right). Cerebellum not included.",
+      "approximated": false,
+      "triangles": 14000,
+      "bbox_min": [
+        -0.06779,
+        1.65256,
+        -0.09966
+      ],
+      "bbox_max": [
+        0.06779,
+        1.76662,
+        0.08242
+      ],
+      "center": [
+        0.0,
+        1.70959,
+        -0.00862
+      ]
+    },
+    {
+      "name": "brainstem",
+      "label": "Brainstem",
+      "system": "Nervous",
+      "description": "Midbrain, pons and medulla oblongata.",
+      "source": "Z-Anatomy Midbrain, Pons, Medulla oblongata (left + right halves).",
+      "approximated": false,
+      "triangles": 6000,
+      "bbox_min": [
+        -0.02134,
+        1.6028,
+        -0.03608
+      ],
+      "bbox_max": [
+        0.02134,
+        1.68464,
+        0.01017
+      ],
+      "center": [
+        0.0,
+        1.64372,
+        -0.01296
+      ]
+    },
+    {
+      "name": "hypothalamus",
+      "label": "Hypothalamus",
+      "system": "Nervous",
+      "description": "Hypothalamus of the diencephalon; controls body temperature, hunger, thirst, sleep and hormone release via the pituitary.",
+      "source": "Z-Anatomy Hypothalamus.",
+      "approximated": false,
+      "triangles": 1500,
+      "bbox_min": [
+        -0.01004,
+        1.67111,
+        0.00543
+      ],
+      "bbox_max": [
+        0.01004,
+        1.6913,
+        0.02351
+      ],
+      "center": [
+        0.0,
+        1.6812,
+        0.01447
+      ]
+    },
+    {
+      "name": "spinal_cord",
+      "label": "Spinal cord",
+      "system": "Nervous",
+      "description": "Spinal cord from the medulla to the conus medullaris.",
+      "source": "Z-Anatomy White matter of spinal cord.",
+      "approximated": false,
+      "triangles": 2998,
+      "bbox_min": [
+        -0.00778,
+        1.09863,
+        -0.07885
+      ],
+      "bbox_max": [
+        0.00755,
+        1.60943,
+        -0.01641
+      ],
+      "center": [
+        -0.00012,
+        1.35403,
+        -0.04763
+      ]
+    },
+    {
+      "name": "vagus",
+      "label": "Vagus nerve (CN X)",
+      "system": "Nervous",
+      "description": "Left and right vagus nerves, from the brainstem down through the neck and thorax.",
+      "source": "Z-Anatomy Vagus nerve (X), left + right, re-tubed at low resolution.",
+      "approximated": false,
+      "triangles": 2720,
+      "bbox_min": [
+        -0.02996,
+        1.15089,
+        -0.04533
+      ],
+      "bbox_max": [
+        0.0723,
+        1.64091,
+        0.04608
+      ],
+      "center": [
+        0.02117,
+        1.3959,
+        0.00038
+      ]
+    },
+    {
+      "name": "phrenic",
+      "label": "Phrenic nerves",
+      "system": "Nervous",
+      "description": "Left and right phrenic nerves, neck to diaphragm; they drive the diaphragm for breathing.",
+      "source": "NOT in Z-Anatomy. Path approximated from source anatomy: down the front of scalenus anterior, along the side of the heart, onto the diaphragm dome.",
+      "approximated": true,
+      "triangles": 1456,
+      "bbox_min": [
+        -0.04705,
+        1.29004,
+        0.01123
+      ],
+      "bbox_max": [
+        0.09541,
+        1.55159,
+        0.02879
+      ],
+      "center": [
+        0.02418,
+        1.42081,
+        0.02001
+      ]
+    },
+    {
+      "name": "arm_nerve",
+      "label": "Brachial plexus & median nerve",
+      "system": "Nervous",
+      "description": "Brachial plexus and median nerve of both arms.",
+      "source": "Z-Anatomy brachial plexus roots, trunks, divisions and posterior cord, plus median nerve. The lateral and medial cords are absent from the source.",
+      "approximated": false,
+      "triangles": 2544,
+      "bbox_min": [
+        -0.27487,
+        0.87071,
+        -0.03504
+      ],
+      "bbox_max": [
+        0.27487,
+        1.56728,
+        0.0378
+      ],
+      "center": [
+        0.0,
+        1.219,
+        0.00138
+      ]
+    },
+    {
+      "name": "auditory_nerve",
+      "label": "Vestibulocochlear nerve (CN VIII)",
+      "system": "Nervous",
+      "description": "Hearing and balance nerve, both sides.",
+      "source": "Z-Anatomy Vestibulocochlear nerve (VIII), left + right.",
+      "approximated": false,
+      "triangles": 1184,
+      "bbox_min": [
+        -0.02246,
+        1.64217,
+        -0.01514
+      ],
+      "bbox_max": [
+        0.02246,
+        1.64769,
+        -0.00342
+      ],
+      "center": [
+        0.0,
+        1.64493,
+        -0.00928
+      ]
+    },
+    {
+      "name": "ears",
+      "label": "Inner ear",
+      "system": "Sensory",
+      "description": "Cochlea and vestibular apparatus (balance organ), both sides.",
+      "source": "Z-Anatomy Cochlea + Vestibule. Possibly derived from a CC BY-NC-SA model; see LICENSE.txt.",
+      "approximated": false,
+      "triangles": 3000,
+      "bbox_min": [
+        -0.04675,
+        1.64156,
+        -0.01314
+      ],
+      "bbox_max": [
+        0.04673,
+        1.65611,
+        0.0067
+      ],
+      "center": [
+        -1e-05,
+        1.64883,
+        -0.00322
+      ]
+    },
+    {
+      "name": "heart",
+      "label": "Heart",
+      "system": "Cardiovascular",
+      "description": "The four chambers of the heart.",
+      "source": "Z-Anatomy left/right atrium and ventricle.",
+      "approximated": false,
+      "triangles": 10000,
+      "bbox_min": [
+        -0.0383,
+        1.2882,
+        -0.0314
+      ],
+      "bbox_max": [
+        0.08571,
+        1.40068,
+        0.0862
+      ],
+      "center": [
+        0.0237,
+        1.34444,
+        0.0274
+      ]
+    },
+    {
+      "name": "aorta",
+      "label": "Aorta",
+      "system": "Cardiovascular",
+      "description": "Aortic root, arch and descending (thoracic + abdominal) aorta.",
+      "source": "Z-Anatomy Ascending aorta, Aortic arch, Thoracic aorta, Abdominal aorta.",
+      "approximated": false,
+      "triangles": 1840,
+      "bbox_min": [
+        -0.01003,
+        1.07146,
+        -0.04988
+      ],
+      "bbox_max": [
+        0.03329,
+        1.45493,
+        0.0476
+      ],
+      "center": [
+        0.01163,
+        1.26319,
+        -0.00114
+      ]
+    },
+    {
+      "name": "arm_artery",
+      "label": "Left arm artery",
+      "system": "Cardiovascular",
+      "description": "Left subclavian, axillary and brachial artery, continuing to the wrist.",
+      "source": "Z-Anatomy Left subclavian, Axillary (L), Brachial (L), Radial (L) arteries.",
+      "approximated": false,
+      "triangles": 2368,
+      "bbox_min": [
+        0.01994,
+        0.87923,
+        -0.02665
+      ],
+      "bbox_max": [
+        0.29948,
+        1.48665,
+        0.0273
+      ],
+      "center": [
+        0.15971,
+        1.18294,
+        0.00032
+      ]
+    },
+    {
+      "name": "lungs",
+      "label": "Lungs",
+      "system": "Respiratory",
+      "description": "Both lungs (all five lobes).",
+      "source": "Z-Anatomy lobes of left and right lung.",
+      "approximated": false,
+      "triangles": 11998,
+      "bbox_min": [
+        -0.13655,
+        1.21547,
+        -0.08513
+      ],
+      "bbox_max": [
+        0.13524,
+        1.49057,
+        0.10826
+      ],
+      "center": [
+        -0.00065,
+        1.35302,
+        0.01156
+      ]
+    },
+    {
+      "name": "trachea",
+      "label": "Trachea & main bronchi",
+      "system": "Respiratory",
+      "description": "Trachea and left/right main bronchi.",
+      "source": "Z-Anatomy Trachea, Left and Right main bronchus.",
+      "approximated": false,
+      "triangles": 3000,
+      "bbox_min": [
+        -0.02071,
+        1.36997,
+        -0.02767
+      ],
+      "bbox_max": [
+        0.04991,
+        1.52126,
+        0.01996
+      ],
+      "center": [
+        0.0146,
+        1.44562,
+        -0.00386
+      ]
+    },
+    {
+      "name": "marrow",
+      "label": "Pelvis & femurs (bone marrow)",
+      "system": "Skeletal",
+      "description": "Hip bones and both femurs, major sites of red bone marrow; relevant to bone-density loss in spaceflight.",
+      "source": "Z-Anatomy Hip bone (L/R) and Femur (L/R). Sacrum is in spine_bones.",
+      "approximated": false,
+      "triangles": 12000,
+      "bbox_min": [
+        -0.15469,
+        0.44788,
+        -0.0888
+      ],
+      "bbox_max": [
+        0.15469,
+        1.05405,
+        0.05996
+      ],
+      "center": [
+        0.0,
+        0.75096,
+        -0.01442
+      ]
+    },
+    {
+      "name": "spine_bones",
+      "label": "Spine & rib cage",
+      "system": "Skeletal",
+      "description": "Vertebral column (C1 to coccyx) and rib cage (ribs, costal cartilages, sternum).",
+      "source": "Z-Anatomy vertebrae, sacrum, coccyx, 24 ribs, costal cartilages, sternum. Intervertebral discs not included.",
+      "approximated": false,
+      "triangles": 14494,
+      "bbox_min": [
+        -0.14761,
+        0.86498,
+        -0.10322
+      ],
+      "bbox_max": [
+        0.14761,
+        1.61706,
+        0.11905
+      ],
+      "center": [
+        0.0,
+        1.24102,
+        0.00791
+      ]
+    }
+  ]
+}

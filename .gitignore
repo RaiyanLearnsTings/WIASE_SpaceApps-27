@@ -218,3 +218,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- WIASE project ----
+# Runtime human check-ins (may contain personal notes) and their temp/corrupt copies
+data/checkins*.json
+data/checkins.tmp
+.DS_Store
+
+# Private team material (separate private repo) and local tool config
+private/
+.agents/
+.claude/
+.codex/
+.kiro/
+.impeccable/
+*.zip

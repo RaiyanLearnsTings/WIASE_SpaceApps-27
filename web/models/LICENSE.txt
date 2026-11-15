@@ -1,0 +1,50 @@
+astronaut.glb - static human anatomy model
+==========================================
+
+This model is a derivative work of Z-Anatomy and is distributed under the
+same license.
+
+  Licence : Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+            https://creativecommons.org/licenses/by-sa/4.0/
+
+Required attribution (as specified by Z-Anatomy's License.txt)
+-------------------------------------------------------------
+  "Z-Anatomy - The libre 3D atlas of anatomy - CC-BY-SA 4.0"
+  "BodyParts3D - The Database Center for Life Science - CC-BY-SA 2.1 Japan"
+
+Source
+------
+  Z-Anatomy, "Models of human anatomy" (Blender application template)
+  Authors : Kousaku OKUBO (original model 'BodyParts3D'), Gauthier KERVYN
+            (design, 3D, anatomy), Marcin ZIELINSKI (Blender add-on) and the
+            Z-Anatomy contributors listed in the source License.txt
+  URL     : https://github.com/Z-Anatomy/Models-of-human-anatomy
+  File    : Z-Anatomy.zip -> Z-Anatomy/Startup.blend
+  Version : git commit 43299fc6200dd580f2844f6186f67a6114592e56
+            (Z-Anatomy publishes no release tags; the commit pins the exact version)
+  SHA-256 : e029688545627bd0214b269e1063143abb580aad72b2c2445d6d8a9a0d9da736
+  BodyParts3D original: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html
+
+Third-party material inside Z-Anatomy
+-------------------------------------
+Z-Anatomy states that it used the following as reference and/or included and
+adapted them. It does not say which objects they affect:
+  - "Brainder" and "White matter" from the University of Washington
+  - "Cranial Nerves and Foramina - by University of Dundee, CAHID - CC-BY 4.0"
+  - "Anatomy of the Inner Ear - by University of Dundee School of Medicine - CC-BY-NC-SA 4.0"
+  - "Kidney - by Lissie Cowley - CC-BY-NC 4.0" (no kidney is used here)
+The "ears" (cochlea + vestibule) object may derive from the Dundee inner-ear
+model, whose licence is NonCommercial.
+
+Changes made
+------------
+Selected structures were extracted, joined, re-tubed (curves), decimated,
+remeshed (skin), smoothed, rescaled to 1.78 m, re-coloured and exported
+as meshopt-compressed glTF. The phrenic nerves are not present in Z-Anatomy;
+their paths were approximated (see tools/build_body.py). Full build scripts:
+tools/ in the repository that contains this file.
+
+Attribution line for apps
+-------------------------
+  "3D anatomy: Z-Anatomy - The libre 3D atlas of anatomy (CC BY-SA 4.0); BodyParts3D - The Database
+   Center for Life Science (CC BY-SA 2.1 JP). Modified."

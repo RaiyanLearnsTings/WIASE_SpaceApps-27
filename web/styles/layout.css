@@ -1,0 +1,104 @@
+/* Layout: two-row top bar + a 2-column, no-scroll dashboard (sketch: Alerts / To-do on the left,
+   Cabin / Crew on the right). Each card expands into a full-viewport page dialog. Laptop-first:
+   no page scroll at ≥ 900×600; below that the cards stack and the page scrolls. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 13px/1.45 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap);
+  max-width: 2200px;
+  margin: 0 auto;
+  border-top: 2px solid var(--accent);
+}
+.dash {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--gap);
+}
+.dash__col { display: grid; gap: var(--gap); min-height: 0; }
+.dash__col--left { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+.dash__col--right { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+.dash .card { min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+
+/* ---- expanded pages ---------------------------------------------------------------------- */
+.page {
+  width: calc(100vw - 2 * var(--gap));
+  height: calc(100dvh - 2 * var(--gap));
+  max-width: 2200px;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.page[open] { display: flex; flex-direction: column; animation: page-in .22s var(--ease); }
+.page::backdrop { background: rgba(8, 13, 17, .62); backdrop-filter: blur(6px) saturate(.8); -webkit-backdrop-filter: blur(6px); }
+.page__head { display: flex; align-items: center; gap: 14px; padding: 12px var(--pad); border-bottom: 1px solid var(--line); background: var(--panel); }
+.page__title { display: flex; align-items: baseline; gap: 12px; min-width: 0; margin-right: auto; }
+.page__tools { display: flex; align-items: center; gap: 10px; }
+.page__body { flex: 1; min-height: 0; padding: var(--gap); }
+.page__body > * { height: 100%; }
+@keyframes page-in { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+
+/* Astronaut page: facts | body | details, trends under facts + body (sketch "Physio – individual page") */
+.person {
+  display: grid; gap: var(--gap);
+  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr) minmax(320px, 390px);
+  grid-template-rows: minmax(0, 1fr) 150px;
+  grid-template-areas: "facts stage side" "trends trends side";
+}
+.person__facts { grid-area: facts; }
+.person__stage { grid-area: stage; position: relative; min-height: 0; }
+.person__side { grid-area: side; }
+.person__trends { grid-area: trends; }
+
+/* To-do page (sketch "To-do list"): overall mission | take test, then one column per astronaut */
+.todo-page {
+  display: grid; gap: var(--gap);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "mission tests" "people people";
+}
+.todo-page__mission { grid-area: mission; }
+.todo-page__tests { grid-area: tests; }
+.todo-page__people { grid-area: people; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); min-height: 0; }
+
+.alerts-page { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1.35fr) minmax(360px, 1fr); }
+.cabin-page { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr) minmax(340px, 420px); }
+.cabin-page__side { display: grid; gap: var(--gap); grid-template-rows: auto auto minmax(0, 1fr); min-height: 0; }
+
+.panel, .person > *, .todo-page > *, .alerts-page > *, .cabin-page > * { min-height: 0; min-width: 0; }
+
+/* ---- small screens: stack and allow page scroll (agreed trade-off) ---------------------- */
+@media (max-width: 900px), (max-height: 600px) {
+  body { overflow: auto; }
+  .app { height: auto; min-height: 100dvh; }
+  .dash, .dash__col { display: flex; flex-direction: column; }
+  .dash .card { min-height: 280px; overflow: visible; }
+  .page__body { overflow: auto; }
+  .page__body > * { height: auto; }
+  .person, .todo-page, .alerts-page, .cabin-page { display: flex; flex-direction: column; }
+  .person__stage { height: 60vh; min-height: 360px; }
+  .todo-page__people { grid-template-columns: 1fr; }
+  .hide-md { display: none !important; }
+}
+@media (max-width: 1240px) { .hide-md { display: none !important; } }

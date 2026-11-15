@@ -1,0 +1,857 @@
+{
+  "sensitivity": {
+    "high_resting_hr": [
+      {
+        "intensity": 0.05,
+        "change": 2.75,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.1,
+        "change": 5.5,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.15,
+        "change": 8.25,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.25,
+        "change": 13.75,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.5,
+        "change": 27.5,
+        "detected": 6,
+        "injections": 6,
+        "median_time_to_alert_s": 18.0
+      }
+    ],
+    "cognitive_stress": [
+      {
+        "intensity": 0.05,
+        "change": 7.75,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.1,
+        "change": 15.5,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.15,
+        "change": 23.25,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.25,
+        "change": 38.75,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.5,
+        "change": 77.5,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      }
+    ],
+    "co2_buildup": [
+      {
+        "intensity": 0.05,
+        "change": 67.5,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.1,
+        "change": 135.0,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.15,
+        "change": 202.5,
+        "detected": 3,
+        "injections": 6,
+        "median_time_to_alert_s": 819
+      },
+      {
+        "intensity": 0.25,
+        "change": 337.5,
+        "detected": 6,
+        "injections": 6,
+        "median_time_to_alert_s": 27.5
+      },
+      {
+        "intensity": 0.5,
+        "change": 675.0,
+        "detected": 6,
+        "injections": 6,
+        "median_time_to_alert_s": 20.0
+      }
+    ],
+    "warm_humid_cabin": [
+      {
+        "intensity": 0.05,
+        "change": 0.21,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.1,
+        "change": 0.42,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.15,
+        "change": 0.63,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.25,
+        "change": 1.05,
+        "detected": 0,
+        "injections": 6,
+        "median_time_to_alert_s": null
+      },
+      {
+        "intensity": 0.5,
+        "change": 2.1,
+        "detected": 6,
+        "injections": 6,
+        "median_time_to_alert_s": 28.5
+      }
+    ]
+  },
+  "generated_utc": "2026-11-14T21:19:05+00:00",
+  "method": {
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "clean_days_per_seed": 2,
+    "injections_per_seed": 16,
+    "scenario_seconds": 900,
+    "spacing_seconds": 10800,
+    "note": "Synthetic, data-calibrated streams from server/simulator.py. Validates the detection logic (personal baseline, robust spread, 12 s confirmation, 8 s recovery); it is not evidence of clinical accuracy."
+  },
+  "false_alerts": {
+    "crew_days": 30,
+    "total": 0,
+    "per_crew_day": 0.0,
+    "by_rule": {}
+  },
+  "scenarios": {
+    "high_resting_hr": {
+      "rule": "heart_rate_high",
+      "injections": 20,
+      "detected": 20,
+      "detection_rate": 1.0,
+      "median_time_to_alert_s": 15.0,
+      "max_time_to_alert_s": 16,
+      "median_time_to_clear_s": 7.0,
+      "missed_onsets": []
+    },
+    "cognitive_stress": {
+      "rule": "cognitive_stress",
+      "injections": 20,
+      "detected": 20,
+      "detection_rate": 1.0,
+      "median_time_to_alert_s": 16.0,
+      "max_time_to_alert_s": 16,
+      "median_time_to_clear_s": 7.5,
+      "missed_onsets": []
+    },
+    "co2_buildup": {
+      "rule": "co2_high",
+      "injections": 20,
+      "detected": 20,
+      "detection_rate": 1.0,
+      "median_time_to_alert_s": 17.0,
+      "max_time_to_alert_s": 19,
+      "median_time_to_clear_s": 5.0,
+      "missed_onsets": []
+    },
+    "warm_humid_cabin": {
+      "rule": "cabin_heat_humidity",
+      "injections": 20,
+      "detected": 20,
+      "detection_rate": 1.0,
+      "median_time_to_alert_s": 21.0,
+      "max_time_to_alert_s": 21,
+      "median_time_to_clear_s": 3.0,
+      "missed_onsets": []
+    }
+  },
+  "trials": [
+    {
+      "scenario": "high_resting_hr",
+      "seed": 1,
+      "onset_sim_time": "10:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 1,
+      "onset_sim_time": "13:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 1,
+      "onset_sim_time": "17:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 1,
+      "onset_sim_time": "20:15",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 1,
+      "onset_sim_time": "23:25",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 1,
+      "onset_sim_time": "02:35",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 1,
+      "onset_sim_time": "05:45",
+      "detected": true,
+      "time_to_alert_s": 18,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 1,
+      "onset_sim_time": "08:55",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 1,
+      "onset_sim_time": "12:05",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 1,
+      "onset_sim_time": "15:15",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 1,
+      "onset_sim_time": "18:25",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 1,
+      "onset_sim_time": "21:35",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 1,
+      "onset_sim_time": "00:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 1,
+      "onset_sim_time": "03:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 1,
+      "onset_sim_time": "07:05",
+      "detected": true,
+      "time_to_alert_s": 19,
+      "time_to_clear_after_end_s": 1
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 1,
+      "onset_sim_time": "10:15",
+      "detected": true,
+      "time_to_alert_s": 20,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 2,
+      "onset_sim_time": "10:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 2,
+      "onset_sim_time": "13:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 2,
+      "onset_sim_time": "17:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 2,
+      "onset_sim_time": "20:15",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 2,
+      "onset_sim_time": "23:25",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 2,
+      "onset_sim_time": "02:35",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 2,
+      "onset_sim_time": "05:45",
+      "detected": true,
+      "time_to_alert_s": 18,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 2,
+      "onset_sim_time": "08:55",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 2,
+      "onset_sim_time": "12:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 2,
+      "onset_sim_time": "15:15",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 2,
+      "onset_sim_time": "18:25",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 2,
+      "onset_sim_time": "21:35",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 2,
+      "onset_sim_time": "00:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 2,
+      "onset_sim_time": "03:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 2,
+      "onset_sim_time": "07:05",
+      "detected": true,
+      "time_to_alert_s": 19,
+      "time_to_clear_after_end_s": 1
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 2,
+      "onset_sim_time": "10:15",
+      "detected": true,
+      "time_to_alert_s": 20,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 3,
+      "onset_sim_time": "10:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 3,
+      "onset_sim_time": "13:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 3,
+      "onset_sim_time": "17:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 3,
+      "onset_sim_time": "20:15",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 3,
+      "onset_sim_time": "23:25",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 3,
+      "onset_sim_time": "02:35",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 3,
+      "onset_sim_time": "05:45",
+      "detected": true,
+      "time_to_alert_s": 18,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 3,
+      "onset_sim_time": "08:55",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 3,
+      "onset_sim_time": "12:05",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 3,
+      "onset_sim_time": "15:15",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 3,
+      "onset_sim_time": "18:25",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 3,
+      "onset_sim_time": "21:35",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 3,
+      "onset_sim_time": "00:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 3,
+      "onset_sim_time": "03:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 3,
+      "onset_sim_time": "07:05",
+      "detected": true,
+      "time_to_alert_s": 19,
+      "time_to_clear_after_end_s": 1
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 3,
+      "onset_sim_time": "10:15",
+      "detected": true,
+      "time_to_alert_s": 20,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 4,
+      "onset_sim_time": "10:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 4,
+      "onset_sim_time": "13:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 4,
+      "onset_sim_time": "17:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 4,
+      "onset_sim_time": "20:15",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 4,
+      "onset_sim_time": "23:25",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 4,
+      "onset_sim_time": "02:35",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 4,
+      "onset_sim_time": "05:45",
+      "detected": true,
+      "time_to_alert_s": 18,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 4,
+      "onset_sim_time": "08:55",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 4,
+      "onset_sim_time": "12:05",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 4,
+      "onset_sim_time": "15:15",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 4,
+      "onset_sim_time": "18:25",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 4,
+      "onset_sim_time": "21:35",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 4,
+      "onset_sim_time": "00:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 4,
+      "onset_sim_time": "03:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 4,
+      "onset_sim_time": "07:05",
+      "detected": true,
+      "time_to_alert_s": 19,
+      "time_to_clear_after_end_s": 1
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 4,
+      "onset_sim_time": "10:15",
+      "detected": true,
+      "time_to_alert_s": 20,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 5,
+      "onset_sim_time": "10:45",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 5,
+      "onset_sim_time": "13:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 5,
+      "onset_sim_time": "17:05",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 5,
+      "onset_sim_time": "20:15",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 5,
+      "onset_sim_time": "23:25",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 5,
+      "onset_sim_time": "02:35",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 5,
+      "onset_sim_time": "05:45",
+      "detected": true,
+      "time_to_alert_s": 18,
+      "time_to_clear_after_end_s": 5
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 5,
+      "onset_sim_time": "08:55",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 5,
+      "onset_sim_time": "12:05",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 5,
+      "onset_sim_time": "15:15",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 15
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 5,
+      "onset_sim_time": "18:25",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 6
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 5,
+      "onset_sim_time": "21:35",
+      "detected": true,
+      "time_to_alert_s": 21,
+      "time_to_clear_after_end_s": 3
+    },
+    {
+      "scenario": "high_resting_hr",
+      "seed": 5,
+      "onset_sim_time": "00:45",
+      "detected": true,
+      "time_to_alert_s": 15,
+      "time_to_clear_after_end_s": 7
+    },
+    {
+      "scenario": "cognitive_stress",
+      "seed": 5,
+      "onset_sim_time": "03:55",
+      "detected": true,
+      "time_to_alert_s": 16,
+      "time_to_clear_after_end_s": 0
+    },
+    {
+      "scenario": "co2_buildup",
+      "seed": 5,
+      "onset_sim_time": "07:05",
+      "detected": true,
+      "time_to_alert_s": 19,
+      "time_to_clear_after_end_s": 1
+    },
+    {
+      "scenario": "warm_humid_cabin",
+      "seed": 5,
+      "onset_sim_time": "10:15",
+      "detected": true,
+      "time_to_alert_s": 20,
+      "time_to_clear_after_end_s": 3
+    }
+  ]
+}

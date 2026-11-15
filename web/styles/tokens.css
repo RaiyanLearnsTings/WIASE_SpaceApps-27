@@ -1,0 +1,64 @@
+/* WIASE design tokens.
+   Palette: black #000000 · crimson #C5003C · deep red #880425 · signal yellow #F3E600 · aqua #55EAD4.
+   Colour carries meaning only: crimson = brand / action / alert, yellow = watch, aqua = normal / live.
+   Everything else is a warm-neutral greyscale so the signal colours stay loud. */
+:root {
+  /* palette */
+  --black: #000000;
+  --crimson: #c5003c;
+  --crimson-deep: #880425;
+  --yellow: #f3e600;
+  --aqua: #55ead4;
+
+  /* surfaces (near-black, faintly warm) */
+  --bg: #000000;
+  --panel: #0c0b0b;
+  --panel-2: #141313;
+  --panel-3: #1d1b1b;
+  --inset: #070606;
+  --line: #222020;
+  --line-strong: #363333;
+  --grid: #141212;
+
+  /* text */
+  --ink: #f2efea;
+  --head: #f2efea;
+  --muted: #8f8a85;
+  --faint: #57534f;
+
+  /* roles */
+  --accent: var(--crimson);
+  --accent-press: var(--crimson-deep);
+  --accent-text: #ff3b6b;      /* crimson lifted for small text on black (contrast ≥ 4.5) */
+  --ok: var(--aqua);
+  --watch: var(--yellow);
+  --alert: #ef1752;            /* crimson, brightened for strokes/text on black */
+  --alert-fill: var(--crimson-deep);
+  --info: #c9c4be;             /* telemetry-only: neutral, not a status colour */
+  --na: #4d4946;
+  --human: #f2efea;
+
+  /* data lines */
+  --ice: #f2efea;              /* primary series */
+  --steel: #2e2b2b;
+  --steel-2: #8f8a85;          /* secondary series */
+  --navy: #000000;
+
+  /* type: one superfamily, three cuts */
+  --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* shape & motion */
+  --radius: 2px;
+  --radius-sm: 2px;
+  --gap: 12px;
+  --pad: 20px;
+  --shadow: 0 24px 80px rgba(0, 0, 0, .7);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --ease: linear; }
+  *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
