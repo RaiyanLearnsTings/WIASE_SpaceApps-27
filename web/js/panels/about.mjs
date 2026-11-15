@@ -109,9 +109,10 @@ function credits() {
         <li>Datasets as listed on the Data tab, under their own licences.</li>
       </ul></section>
     <section class="panel"><header class="panel__head"><h3>Use of AI tools</h3></header>
-      <p class="small">The concept, design decisions, data selection and calibration choices are the team’s. An AI coding assistant
-        (Claude Code) helped write and test code and documentation, and drove a scripted Blender pipeline that built the anatomy
-        model from Z-Anatomy. No AI-generated images, video or audio are used in the app.</p>
+      <p class="small">All ideas, design decisions, data choices and the submission materials come from the team. AI was used strictly to
+        speed up the coding workflow: an AI coding assistant (Claude Code) helped write, test and debug the code and its
+        technical documentation, including the script that builds the anatomy model from Z-Anatomy. No AI-generated images,
+        video or audio are used in the app.</p>
       <p class="muted small">Team Super Space Sages · NASA Space Apps Challenge 2026.</p></section>
   </div>`;
 }

@@ -196,6 +196,7 @@ If the model can't load, the procedural placeholder in `body/model.mjs` is used;
   - OpenNeuro ds004902: CC0
   - NASA OSDR EDA and RadLab: public NASA data
 - **Full reference list with citations and DOIs:** [data/SOURCES.md](data/SOURCES.md).
-- **AI use:** the concept, design and data choices are the team's. An AI coding assistant (Claude Code) helped write and
-  test code and docs, and drove the scripted Blender pipeline that built the anatomy model. There are no AI-generated
+- **AI use:** all ideas, the design, the data choices and the submission materials come from the team. AI was used
+  strictly to speed up the coding workflow: an AI coding assistant (Claude Code) helped write, test and debug the code and
+  its technical documentation, including the script that builds the anatomy model. There are no AI-generated
   images, video or audio.
