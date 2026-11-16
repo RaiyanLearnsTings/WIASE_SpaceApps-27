@@ -47,6 +47,7 @@ export function openResponse(ctx, issueId) {
             <strong>${escapeHtml(issue.who)}</strong>${issue.since ? `<span class="muted small">since ${clockOf(issue.since)} sim UTC</span>` : ''}
             ${alertId ? `<button type="button" class="linkbtn" data-story="${alertId}">How was this detected? →</button>` : ''}</div>
           <p>${p.why}</p>
+          ${p.space ? `<p class="respond__space"><span class="label">Why it is different in space</span>${p.space}</p>` : ''}
           <h4>Live evidence</h4>
           <table class="evidence-table"><tbody>${issue.evidence.map((e) => `<tr class="${e.breached ? 'is-out' : ''}">
             <th scope="row">${label(e.key)}</th><td class="mono">${fmt(e.value, e.key)}</td>
@@ -67,7 +68,7 @@ export function openResponse(ctx, issueId) {
               : `<input type="text" id="resp-note" maxlength="140" placeholder="Note (optional): what you found or did" aria-label="Acknowledgement note" value="${escapeHtml(note)}">
                  <button type="button" class="btn btn--primary" data-ack>Acknowledge</button>`}
           </div>
-          <p class="footnote">Non-diagnostic; follow mission procedures. Acknowledging never clears an alert.</p>
+          <p class="footnote">If the crew medical officer is the person affected, another crew member takes their steps. Non-diagnostic; follow mission procedures. Acknowledging never clears an alert.</p>
         </section>
       </div>`;
     // Unchanged since the last frame: leave the DOM (and any hover/selection) alone.

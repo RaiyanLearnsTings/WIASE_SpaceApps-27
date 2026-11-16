@@ -1,7 +1,7 @@
 // About & data page: the mission problem, how detection works, which NASA and open data drive
 // which signals, measured detector validation, limitations, credits and AI-use disclosure.
 // Tabs instead of scrolling. Validation numbers come from web/demo/validation.json (tools/evaluate.py).
-import { escapeHtml } from '../format.mjs';
+import { escapeHtml, statusPill } from '../format.mjs';
 import { ATTRIBUTION } from '../body/anatomy.mjs';
 
 const DATA = [
@@ -49,6 +49,54 @@ function overview() {
         <li><strong>Crew medical officer</strong>: who needs attention, what changed, is the cabin also changing, what to check next.</li>
         <li><strong>Ground</strong>: review packets that arrive after the communication delay; the crew does not wait for them.</li>
       </ul>
+    </section>
+  </div>`;
+}
+
+// Plain-language guide for crew who are not medical specialists: what each status means and what to do,
+// how to work through an issue, and the terms used on screen.
+const LEGEND = [
+  ['normal', 'Within this person’s own usual range. Nothing to do. It is not proof of good health.'],
+  ['watch', 'A reading is past this person’s limit but not confirmed, or it is a signal that never raises alerts (blood pressure, SpO₂, noise). Check the sensor and what they were doing; open Response steps if it stays.'],
+  ['alert', 'A confirmed change: it lasted 12 s, or 2 of 3 cognitive signals agree. Open Response steps and work through them in order.'],
+  ['unavailable', 'No reading right now (sensor off, asleep, or the feed dropped). Never counted as normal: check the sensor is worn and connected.'],
+  ['info', 'Shown for awareness only, with no limit or alert (radiation).'],
+];
+const HOW = [
+  ['Find it', 'Click the item in the Alerts card, or the glowing region on an astronaut.'],
+  ['Read the evidence', 'Each reading is shown next to what is expected for this person and the limit it crossed.'],
+  ['Do the steps in order', 'Every step names who does it: the crew member, the crew medical officer or the whole crew.'],
+  ['Check “Escalate if” first', 'Red-flag symptoms listed there override everything else on screen.'],
+  ['Acknowledge and re-check', 'Acknowledge to record that someone is on it (it never silences the alert), then re-check at the time shown.'],
+  ['Don’t wait for Earth', 'Ground review arrives minutes later; the crew acts on board.'],
+];
+const TERMS = [
+  ['Baseline', 'This person’s own usual value, adjusted for activity and sleep.'],
+  ['Limit', 'How far from baseline counts as unusual for this person (not a clinical limit).'],
+  ['Heart rate', 'Beats per minute (bpm). Normally higher during exercise, lower in sleep.'],
+  ['Blood pressure', 'Systolic (pressure as the heart beats) over diastolic (between beats), in mmHg.'],
+  ['SpO₂', 'How saturated the blood is with oxygen, from a finger or wrist sensor.'],
+  ['Reaction time', 'Median response time in the 45 s reaction test (ms).'],
+  ['Lapses', 'Responses of 500 ms or slower: a sign of fatigue or poor focus.'],
+  ['STAI-S', 'A standard 20–80 state-anxiety score (higher means more anxious right now).'],
+  ['CO₂ ppm', 'Carbon dioxide in the cabin air, in parts per million.'],
+  ['Humidity', 'Water vapour in the air, as a % of the most it could hold.'],
+  ['dBA', 'Sound level as the ear hears it (synthetic in this demo).'],
+  ['µGy/h', 'Absorbed radiation dose rate, micrograys per hour (ISS RadLab).'],
+  ['CMO', 'Crew medical officer, trained to lead medical care on board.'],
+  ['Sim UTC', 'Simulated mission clock time.'],
+];
+
+function guide() {
+  return `<div class="about-grid">
+    <section class="panel"><header class="panel__head"><h3>What the colours mean</h3></header>
+      <ul class="guide-legend">${LEGEND.map(([st, t]) => `<li>${statusPill(st)}<span>${t}</span></li>`).join('')}</ul>
+    </section>
+    <section class="panel"><header class="panel__head"><h3>When something lights up</h3></header>
+      <ol class="pipeline">${HOW.map(([t, d], i) => `<li><span class="pipeline__n">${i + 1}</span><div><strong>${t}</strong><span class="muted small">${d}</span></div></li>`).join('')}</ol>
+    </section>
+    <section class="panel"><header class="panel__head"><h3>Terms on screen</h3></header>
+      <dl class="guide-terms">${TERMS.map(([t, d]) => `<dt>${t}</dt><dd>${d}</dd>`).join('')}</dl>
     </section>
   </div>`;
 }
@@ -126,7 +174,7 @@ export const aboutPage = {
     let v = null;
     fetch('demo/validation.json').then((r) => (r.ok ? r.json() : null)).then((x) => { v = x; render(); }).catch(() => {});
     body.innerHTML = `<div class="about">
-      <div class="tabs" role="tablist">${[['overview', 'Overview'], ['data', 'Data & NASA sources'], ['validation', 'Validation'], ['credits', 'Limits, credits & AI use']]
+      <div class="tabs" role="tablist">${[['overview', 'Overview'], ['guide', 'Guide & terms'], ['data', 'Data & NASA sources'], ['validation', 'Validation'], ['credits', 'Limits, credits & AI use']]
         .map(([k, l]) => `<button type="button" role="tab" data-about-tab="${k}">${l}</button>`).join('')}</div>
       <div class="about__body" id="about-body"></div></div>`;
     body.addEventListener('click', (e) => {
@@ -135,7 +183,7 @@ export const aboutPage = {
     });
     function render() {
       body.querySelectorAll('[data-about-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.aboutTab === tab)));
-      const html = tab === 'overview' ? overview() : tab === 'data' ? data(ctx) : tab === 'validation' ? validation(v) : credits();
+      const html = tab === 'overview' ? overview() : tab === 'guide' ? guide() : tab === 'data' ? data(ctx) : tab === 'validation' ? validation(v) : credits();
       const el = body.querySelector('#about-body');
       if (el.dataset.html !== `${tab}:${!!v}`) { el.innerHTML = html; el.dataset.html = `${tab}:${!!v}`; }
     }

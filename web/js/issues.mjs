@@ -5,7 +5,7 @@
 //   watch — a reading is past its personal threshold without a confirmed alert, or a telemetry-only
 //           signal (BP, SpO₂, noise) is out of range. Shown so nothing is hidden; never an alert.
 // Each issue links to a protocol: why it matters, what you might notice, ordered steps with an owner,
-// when to escalate, and when to re-check. Steps are non-diagnostic and defer to mission procedures.
+// when to escalate, and when to re-check. `space` explains, in plain words, why it is different in spaceflight. Steps are non-diagnostic and defer to mission procedures.
 
 const CREW = 'Crew member';
 const CMO = 'Crew medical officer';
@@ -15,6 +15,7 @@ export const PROTOCOLS = {
   heart_rate_high: {
     title: 'Heart rate high for current activity',
     why: 'Heart rate is well above this person’s own expected value for what they are doing. Usual causes are recent exertion, stress, heat, dehydration, illness or a loose sensor; occasionally it needs medical attention.',
+    space: 'In weightlessness body fluids shift toward the head and, over months, the heart and blood vessels adapt to doing less work. The same task can then push heart rate higher than it would on Earth. Daily exercise sessions are part of the schedule, so check the timeline first.',
     notice: ['Racing or pounding heartbeat', 'Shortness of breath', 'Dizziness', 'Chest discomfort'],
     steps: [
       [CREW, 'Stop strenuous work and sit or rest quietly for 5 minutes.'],
@@ -29,6 +30,7 @@ export const PROTOCOLS = {
   cognitive_stress: {
     title: 'Slower reactions and higher anxiety',
     why: 'Slower reaction time, more lapses and higher anxiety raise the chance of errors in safety-critical work. Common drivers are fatigue, short sleep, workload, stress or high cabin CO₂.',
+    space: 'Isolation, confinement, shifted sleep schedules and the long communication delay add up over a deep-space mission, and no one on Earth can step in quickly. A small slowdown matters most during safety-critical work such as robotics, docking or spacewalk preparation.',
     notice: ['Trouble concentrating', 'Headache', 'Irritability', 'Unusual tiredness'],
     steps: [
       [CREW, 'Pause or hand off safety-critical tasks; use two-person verification for anything that must continue.'],
@@ -44,6 +46,7 @@ export const PROTOCOLS = {
   co2_high: {
     title: 'Cabin CO₂ above baseline',
     why: 'Raised CO₂ affects everyone in the shared air and is associated with headache, fatigue and poorer concentration (NASA OCHMO technical brief TB-004).',
+    space: 'Without gravity, exhaled air does not rise and drift away, so CO₂ can collect around a person’s face wherever airflow is weak, for example in a sleep station. Fans keep the air mixed, so a blocked vent can create a local pocket even when the cabin average looks normal.',
     notice: ['Headache', 'Fatigue', 'Shortness of breath', 'Difficulty concentrating'],
     steps: [
       [ALL, 'Open the Cabin map and find the module with the highest CO₂ reading.'],
@@ -59,6 +62,7 @@ export const PROTOCOLS = {
   cabin_heat_humidity: {
     title: 'Cabin warm and humid',
     why: 'Heat and humidity together make it harder for the body to cool itself, add fatigue and can affect equipment.',
+    space: 'Without gravity there is no natural convection: warm air and sweat stay on the skin unless fans move them away, so the body sheds heat less easily. The humidity system also recovers water from the air, so a fault can affect the water supply too.',
     notice: ['Sweating', 'Thirst', 'Fatigue', 'Headache'],
     steps: [
       [ALL, 'Open the Cabin map and find the warmest module (Systems is often first).'],
@@ -73,6 +77,7 @@ export const PROTOCOLS = {
   blood_pressure: {
     title: 'Blood pressure outside personal range',
     why: 'A single reading outside this person’s range is often technique or activity related; a confirmed change is worth a medical review. There is no alert rule for blood pressure in this demo.',
+    space: 'In weightlessness fluids shift toward the head and the body adapts by lowering its blood volume. Readings can differ from a person’s Earth values, and dizziness on standing is a known problem after returning to gravity.',
     notice: ['Headache', 'Dizziness on standing', 'Blurred vision'],
     steps: [
       [CREW, 'Sit quietly for 5 minutes, arm supported at heart level, correct cuff size.'],
@@ -86,6 +91,7 @@ export const PROTOCOLS = {
   spo2_low: {
     title: 'Blood oxygen below personal range',
     why: 'A low SpO₂ reading is often a cold finger or sensor movement, but a real drop matters. Telemetry only; there is no alert rule for it.',
+    space: 'Life support controls the cabin’s oxygen and pressure. If more than one person shows a low reading at the same time, suspect the atmosphere, not the people.',
     notice: ['Breathlessness', 'Dizziness', 'Headache'],
     steps: [
       [CREW, 'Stay still, warm your hands and reseat the oximeter; re-measure.'],
@@ -99,6 +105,7 @@ export const PROTOCOLS = {
   noise_high: {
     title: 'Cabin noise above range (synthetic channel)',
     why: 'Sustained noise adds fatigue and can affect hearing. This channel is synthetic in the demo.',
+    space: 'Fans and pumps run all day in a spacecraft and there is nowhere quiet to go. Long exposure is a known hearing risk for crews, which is why hearing protection is used in loud modules.',
     notice: ['Ringing ears', 'Difficulty hearing speech', 'Headache'],
     steps: [
       [ALL, 'Wear hearing protection in the loud module.'],

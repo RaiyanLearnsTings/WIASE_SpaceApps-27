@@ -174,7 +174,11 @@ export const ORGANS = [
       info: 'Radiation is displayed as telemetry only. There is no alert rule, and absorbed dose is not converted to dose equivalent.',
       unavailable: 'No current radiation reading.',
     },
-    checks: ['Track cumulative exposure with mission dosimetry procedures.'],
+    checks: [
+      'Wear your personal dosimeter at all times.',
+      'If a solar particle event warning is issued, go to the designated shelter area until the all-clear.',
+      'You cannot feel radiation at these levels: track cumulative dose with mission dosimetry procedures.',
+    ],
   },
 ];
 

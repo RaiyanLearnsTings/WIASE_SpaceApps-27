@@ -114,7 +114,7 @@ Works on the hosted demo or the live server.
 7. **To-do → Queue ground review** in Deep Space mode: the packet arrives 12 simulated minutes later. Switch to ISS to compare.
 8. Run the **reaction test** (45 s, three games drawn at random) from an astronaut's Check-ins tab. Human input is labelled
    separately and never opens alerts.
-9. **About → Validation** for the measured false-alert and detection numbers.
+9. **About → Validation** for the measured false-alert and detection numbers, and **About → Guide & terms** for a plain-language guide to the colours, how to respond and the terms on screen.
 
 ## Validation
 
@@ -196,6 +196,7 @@ If the model can't load, the procedural placeholder in `body/model.mjs` is used;
   - OpenNeuro ds004902: CC0
   - NASA OSDR EDA and RadLab: public NASA data
 - **Full reference list with citations and DOIs:** [data/SOURCES.md](data/SOURCES.md).
+- **Every link we used (data, information, tools), with what each was for:** [RESOURCES.md](RESOURCES.md).
 - **AI use:** all ideas, the design, the data choices and the submission materials come from the team. AI was used
   strictly to speed up the coding workflow: an AI coding assistant (Claude Code) helped write, test and debug the code and
   its technical documentation, including the script that builds the anatomy model. There are no AI-generated
